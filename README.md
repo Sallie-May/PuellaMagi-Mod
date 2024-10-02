@@ -1,6 +1,6 @@
-# FurRiotMod
+# PuellaMagiMod
 
-**FurRiotMod** is a Minecraft mod designed to enhance gameplay with various commands related to combat, movement, visuals, and utility. This mod allows users to easily modify in-game mechanics such as teleportation, visual effects, and aimbot settings, while providing a variety of keybindings for ease of use.
+**PuellaMagiMod** is a Minecraft mod designed to enhance gameplay with various commands related to combat, movement, visuals, and utility. This mod allows users to easily modify in-game mechanics such as teleportation, visual effects, and aimbot settings, while providing a variety of keybindings for ease of use.
 
 ## Features
 - **Combat Enhancements:** Modify aimbot range with ease.
@@ -10,7 +10,7 @@
 - **Keybindings:** Quick access to various actions such as VClip, HClip, teleportation, and aimbot.
 
 ## Installation
-1. Download the latest release from the [releases page](https://github.com/your-username/FurRiotMod/releases).
+1. Download the latest release from the [releases page](https://github.com/Sallie-May/PuellaMagi-Mod/releases).
 2. Place the mod `.jar` file into your Minecraft `mods` folder.
 3. Launch Minecraft with Forge installed.
 
