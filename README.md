@@ -44,6 +44,7 @@
 - **Press** `[Teleport Toggle Key]` to random teleport.
 - **Press** `[Particles Key]` to enable Laser ESP.
 - **Press** `[Aimbot Key]` to toggle Aimbot.
+- **Press** `[Killaura Key]` to toggle Killaura (15 blocks).
 - **Press** `[CMD Spammer Key]` to enable the CMD Spammer.
 
 ## Bonus Features
