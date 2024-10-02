@@ -41,6 +41,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
+
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -775,7 +776,7 @@ public class SallieMod {
 
                                 // Send the command if it's not empty
                                 if (!ToucheCMD.isEmpty()) {
-                                    player.sendChatMessage(ToucheCMD);
+                                    player.sendChatMessage("/"+ToucheCMD);
                                 }
                             }
                         }
