@@ -25,6 +25,7 @@
 - `?goto <Coordinate>`: Teleport to the specified coordinate.
 - `?goto stop`: Stop teleporting.
 - `?autoteleport <on/off>`: Enable or disable automatic teleportation.
+- `?spin <1/2>: 1 is packet based, 2 is head based`: Change type of spinning.
 
 ### Visual Commands
 - `?color <hexCode>`: Set the health text color using a hex code (e.g., `?color FF5733`).
@@ -46,6 +47,7 @@
 - **Press** `[Aimbot Key]` to toggle Aimbot.
 - **Press** `[Killaura Key]` to toggle Killaura (15 blocks).
 - **Press** `[CMD Spammer Key]` to enable the CMD Spammer.
+- **Press** `[Spin]` to enable the Spin.
 
 ## Bonus Features
 - **Auto Teleport:** Automatically teleport if health drops below 500 HP.
