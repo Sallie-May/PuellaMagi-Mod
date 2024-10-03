@@ -73,6 +73,10 @@ public class SallieMod {
     public static boolean Crasher = false;
     public static boolean FlyEnabled = false;
     public static boolean Spin = false;
+    public static int rotationMode = 1;
+
+    private static float currentYaw = 0;
+    private static final float yawIncrement = 45;
 
 
     public static float flyspeed =  0.05f;
@@ -534,7 +538,27 @@ public class SallieMod {
                 }
             }
 
+            if (message.startsWith("?spin")) {
+                String[] parts = message.split(" ");
+                if (parts.length == 2) {
+                    try {
+                        int mode = Integer.parseInt(parts[1]);
 
+                        if (mode == 1 || mode == 2) {
+                            rotationMode = mode;
+                            String modeMessage = (mode == 1) ? "Packet-based rotation" : "Head-based rotation";
+                            Minecraft.getInstance().player.sendMessage(new StringTextComponent("Rotation mode changed to: " + modeMessage), Minecraft.getInstance().player.getUniqueID());
+                        } else {
+                            Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid mode. Use 1 for packet-based, 2 for head-based."), Minecraft.getInstance().player.getUniqueID());
+                        }
+                    } catch (NumberFormatException e) {
+                        Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid input. Please enter 1 for packet-based or 2 for head-based rotation."), Minecraft.getInstance().player.getUniqueID());
+                    }
+
+                    event.setCanceled(true);
+                    return;
+                }
+            }
             if (message.startsWith("?suffixdisable")) {
                 suffixDisabled = true;
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent("Suffix disabled."), Minecraft.getInstance().player.getUniqueID());
@@ -765,10 +789,24 @@ public class SallieMod {
                             player.sendMessage(new StringTextComponent(toggleMessage), player.getUniqueID());
                         }
                         if (Spin) {
-                            float newYaw = player.rotationYaw + 45;
-                            float newPitch = player.rotationPitch;
+                            currentYaw += yawIncrement;
 
-                            player.connection.sendPacket(new CPlayerPacket.RotationPacket(newYaw, newPitch, true));
+                            if (currentYaw >= 360) {
+                                currentYaw -= 360;
+                            }
+                            if (rotationMode == 1) {
+                                float newYaw = player.rotationYaw + currentYaw;
+                                float newPitch = player.rotationPitch;
+
+
+                                player.connection.sendPacket(new CPlayerPacket.RotationPacket(newYaw, newPitch, true));
+                            } else if (rotationMode == 2) {
+                                player.rotationYawHead = player.rotationYaw + currentYaw;
+                                player.rotationPitch = player.rotationPitch;
+
+
+                            }
+
 
                         }
                         if (NukerEnabled) {
