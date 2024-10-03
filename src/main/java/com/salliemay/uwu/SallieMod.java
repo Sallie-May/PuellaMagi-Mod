@@ -119,6 +119,7 @@ public class SallieMod {
             ClientRegistry.registerKeyBinding(NukerKey);
             ClientRegistry.registerKeyBinding(StashKey);
             ClientRegistry.registerKeyBinding(CMDSpammer);
+            ClientRegistry.registerKeyBinding(SpinKey);
         } catch (Exception e) {
             LOGGER.error("Error during client setup: ", e);
         }
@@ -771,7 +772,7 @@ public class SallieMod {
 
                         }
                         if (NukerEnabled) {
-                            Nuker.tick();
+                            Nuker.breakNearbyBlocks();
                         }
                         if (CMDSpammerEnabled) {
                             tickCounter++;
