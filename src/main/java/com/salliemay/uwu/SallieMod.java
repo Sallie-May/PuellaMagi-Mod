@@ -43,6 +43,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,7 @@ public class SallieMod {
     private static final KeyBinding NukerKey = new KeyBinding("Nuker", GLFW.GLFW_KEY_Z, "SallieConfig");
     private static final KeyBinding StashKey = new KeyBinding("Stash", GLFW.GLFW_KEY_M, "SallieConfig");
     private static final KeyBinding CMDSpammer = new KeyBinding("CMDSpammer", GLFW.GLFW_KEY_DELETE, "SallieConfig");
+    private static final KeyBinding SpinKey = new KeyBinding("Spin", GLFW.GLFW_KEY_R, "SallieConfig");
     private static String targetPlayerName = null;
 
     public static boolean randomTeleportEnabled = false;
@@ -70,6 +72,7 @@ public class SallieMod {
     public static boolean NukerEnabled = false;
     public static boolean Crasher = false;
     public static boolean FlyEnabled = false;
+    public static boolean Spin = false;
 
 
     public static float flyspeed =  0.05f;
@@ -540,7 +543,6 @@ public class SallieMod {
 
             if (message.toLowerCase().startsWith("?fly ")) {
                 try {
-                    // Parse speed from the message
                     String[] parts = message.split(" ");
                     if (parts.length == 2) {
                         float speed = Float.parseFloat(parts[1]);
@@ -756,25 +758,31 @@ public class SallieMod {
                             String toggleMessage = NukerEnabled ? "Nuker enabled." : "Nuker disabled.";
                             player.sendMessage(new StringTextComponent(toggleMessage), player.getUniqueID());
                         }
+                        if (SpinKey.isPressed()) {
+                            Spin = !Spin;
+                            String toggleMessage = Spin ? "Spin enabled." : "Spin disabled.";
+                            player.sendMessage(new StringTextComponent(toggleMessage), player.getUniqueID());
+                        }
+                        if (Spin) {
+                            float newYaw = player.rotationYaw + 45;
+                            float newPitch = player.rotationPitch;
 
+                            player.connection.sendPacket(new CPlayerPacket.RotationPacket(newYaw, newPitch, true));
+
+                        }
                         if (NukerEnabled) {
                             Nuker.tick();
                         }
                         if (CMDSpammerEnabled) {
-                            // Increment tick counter
                             tickCounter++;
 
-                            // Check if the current tick counter is greater than or equal to the delay
                             if (tickCounter >= commandDelay) {
-                                // Reset tick counter
                                 tickCounter = 0;
 
-                                // Check if ToucheCMD contains a '/' and remove it
                                 if (ToucheCMD.contains("/")) {
                                     ToucheCMD = ToucheCMD.replace("/", "");
                                 }
 
-                                // Send the command if it's not empty
                                 if (!ToucheCMD.isEmpty()) {
                                     player.sendChatMessage("/"+ToucheCMD);
                                 }
