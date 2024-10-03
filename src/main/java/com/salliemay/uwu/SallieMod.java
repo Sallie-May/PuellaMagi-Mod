@@ -293,6 +293,7 @@ public class SallieMod {
                 helpMessage.append(TextFormatting.YELLOW + "- ?goto <Coordinate>: Will make you go to the coordinate indicated\n");
                 helpMessage.append(TextFormatting.YELLOW + "- ?goto stop: To stop traveling\n");
                 helpMessage.append(TextFormatting.YELLOW + "- ?autoteleport <on/off>: Pretty logic\n");
+                helpMessage.append(TextFormatting.YELLOW + "- ?spin <1/2>: 1 is packet based, 2 is head based\n");
 
                 helpMessage.append(TextFormatting.GREEN + "**VISUAL COMMANDS**\n");
                 helpMessage.append(TextFormatting.YELLOW + "- ?color <hexCode>: Set health text color (e.g., ?color FF5733)\n");
