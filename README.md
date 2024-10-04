@@ -34,6 +34,7 @@
 - `?suffixenable`: Enable the message suffix if disabled.
 - `?gradient <index>`: Apply a gradient effect to the module (e.g., rainbow effect).
 - `?gradientlist`: List all available gradient colors.
+- `?noweather`: Will disable or enable noweather
 
 ### Utility Commands
 - `?cmdspammer delay <ticks>`: Set the delay (in ticks) between spamming commands.
