@@ -48,6 +48,7 @@
 - **Press** `[Killaura Key]` to toggle Killaura (15 blocks).
 - **Press** `[CMD Spammer Key]` to enable the CMD Spammer.
 - **Press** `[Spin]` to enable the Spin.
+- **Press** `[Fake Creative]` to enable the Fake Creative.
 
 ## Bonus Features
 - **Auto Teleport:** Automatically teleport if health drops below 500 HP.
