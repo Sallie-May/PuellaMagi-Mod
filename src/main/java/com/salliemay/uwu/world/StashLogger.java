@@ -16,6 +16,8 @@ public class StashLogger {
 
     private final int shulkersThreshold = 1;
     private final int chunkRadius = 8;
+    private long lastNotificationTime = 0; // Store the last notification time
+    private final long notificationCooldown = 600;
 
     @SubscribeEvent
     public void onChunkLoad(ChunkEvent.Load event) {
@@ -38,7 +40,7 @@ public class StashLogger {
             }
         }
 
-        if (totalShulkerCount >= shulkersThreshold) {
+        if (totalShulkerCount >= shulkersThreshold && canSendNotification()) {
             sendNotification(totalShulkerCount, centerChunkX, centerChunkZ);
         }
     }
@@ -69,5 +71,10 @@ public class StashLogger {
                 new StringTextComponent("Found at: " + message),
                 Minecraft.getInstance().player.getUniqueID()
         );
+        lastNotificationTime = System.currentTimeMillis();
+    }
+
+    private boolean canSendNotification() {
+        return (System.currentTimeMillis() - lastNotificationTime) >= notificationCooldown;
     }
 }

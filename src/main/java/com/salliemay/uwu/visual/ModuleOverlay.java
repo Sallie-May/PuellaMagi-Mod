@@ -51,6 +51,13 @@ public class ModuleOverlay {
             activeModules.add("Killaura (Enabled)");
         }
 
+        if (SallieMod.CMDSpammerEnabled) {
+            activeModules.add("Command Spammer (Enabled)");
+        }
+        if (SallieMod.Spin) {
+            activeModules.add("Spin (Enabled)");
+        }
+
         if (SallieMod.particlesEnabled) {
             activeModules.add("Item Laser (Enabled)");
         }
@@ -73,6 +80,13 @@ public class ModuleOverlay {
 
         if (SallieMod.StashEnabled) {
             activeModules.add("StashFinder (Enabled)");
+        }
+        if (SallieMod.FakeCreativeEnabled) {
+            activeModules.add("Fake Creative (Enabled)");
+        }
+
+        if (SallieMod.NoWeatherEnabled) {
+            activeModules.add("NoWeather (Enabled)");
         }
 
         activeModules.add("Teleport Height: " + SallieMod.teleportHeight);

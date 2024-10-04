@@ -1,21 +1,23 @@
 package com.salliemay.uwu;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.salliemay.uwu.combat.Aura;
 import com.salliemay.uwu.combat.Aimbot;
-import com.salliemay.uwu.visual.NoFog;
+import com.salliemay.uwu.visual.*;
 import com.salliemay.uwu.world.Nuker;
 import com.salliemay.uwu.world.StashLogger;
-import com.salliemay.uwu.visual.ModuleOverlay;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.world.GameType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraft.client.Minecraft;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.salliemay.uwu.visual.HealthOverlay;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
@@ -44,6 +46,21 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import org.lwjgl.opengl.GL11;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +79,9 @@ public class SallieMod {
     private static final KeyBinding NukerKey = new KeyBinding("Nuker", GLFW.GLFW_KEY_Z, "SallieConfig");
     private static final KeyBinding StashKey = new KeyBinding("Stash", GLFW.GLFW_KEY_M, "SallieConfig");
     private static final KeyBinding CMDSpammer = new KeyBinding("CMDSpammer", GLFW.GLFW_KEY_DELETE, "SallieConfig");
-    private static final KeyBinding SpinKey = new KeyBinding("Spin", GLFW.GLFW_KEY_R, "SallieConfig");
+    private static final KeyBinding SpinKey = new KeyBinding("Spin", GLFW.GLFW_RELEASE_BEHAVIOR_NONE, "SallieConfig");
+    private static final KeyBinding FakeCreativeKey = new KeyBinding("FakeCreative", GLFW.GLFW_RELEASE_BEHAVIOR_NONE, "SallieConfig");
+    private static final KeyBinding RGBCameraKeys = new KeyBinding("RGBCamera", GLFW.GLFW_RELEASE, "SallieConfig");
     private static String targetPlayerName = null;
 
     public static boolean randomTeleportEnabled = false;
@@ -71,8 +90,9 @@ public class SallieMod {
     public static boolean aimbotEnabled = false;
     public static boolean NukerEnabled = false;
     public static boolean Crasher = false;
-    public static boolean FlyEnabled = false;
     public static boolean Spin = false;
+    public static boolean FakeCreativeEnabled = false;
+    public static boolean NoWeatherEnabled = true;
     public static int rotationMode = 1;
 
     private static float currentYaw = 0;
@@ -80,6 +100,9 @@ public class SallieMod {
 
 
     public static float flyspeed =  0.05f;
+    private static boolean hasTeleported = false;
+
+    public static RGBCam rgbModule;
 
     private String suffix = " | FurRiot vous aimes ! :3 (à part les racistes, homophobes, transphobes etc..... :3)";
     public static int commandDelay = 1;
@@ -92,6 +115,7 @@ public class SallieMod {
     public static double AuraRange = 15.0;
     private static final Aimbot aimbot = new Aimbot();
     public static boolean StashEnabled = false;
+    public static boolean RGBCamEnabled = false;
     public static boolean CMDSpammerEnabled = false;
 
     public static boolean particlesEnabled = false;
@@ -101,14 +125,17 @@ public class SallieMod {
     public SallieMod() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         MinecraftForge.EVENT_BUS.register(HealthOverlay.class);
-        MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(Aura.class);
         MinecraftForge.EVENT_BUS.register(Aimbot.class);
         MinecraftForge.EVENT_BUS.register(NoFog.class);
         MinecraftForge.EVENT_BUS.register(new StashLogger());
+        MinecraftForge.EVENT_BUS.register(this);
+        rgbModule = new RGBCam();
+
 
 
     }
+
 
     public static double aimbotRange = 15.0;
 
@@ -124,6 +151,8 @@ public class SallieMod {
             ClientRegistry.registerKeyBinding(StashKey);
             ClientRegistry.registerKeyBinding(CMDSpammer);
             ClientRegistry.registerKeyBinding(SpinKey);
+            ClientRegistry.registerKeyBinding(FakeCreativeKey);
+            ClientRegistry.registerKeyBinding(RGBCameraKeys);
         } catch (Exception e) {
             LOGGER.error("Error during client setup: ", e);
         }
@@ -137,8 +166,6 @@ public class SallieMod {
             LOGGER.error("Error during server starting: ", e);
         }
     }
-
-
 
     private static final Aura entityAttacker = new Aura();
 
@@ -160,6 +187,8 @@ public class SallieMod {
     private static double targetX, targetY, targetZ;
     private static double teleportDistance = 5.0;
     private static List<String> activeModules = new ArrayList<>();
+
+
 
     @SubscribeEvent
     public void onChat(ClientChatEvent event) {
@@ -267,6 +296,7 @@ public class SallieMod {
                 event.setCanceled(true);
                 return;
             }
+
 
             if (message.equalsIgnoreCase("?autoteleport off")) {
                 autoTeleportEnabled = false;
@@ -567,6 +597,13 @@ public class SallieMod {
                 event.setCanceled(true);
                 return;
             }
+            if (message.startsWith("?noweather")) {
+                NoWeatherEnabled = !NoWeatherEnabled;
+                String status = NoWeatherEnabled ? "enabled" : "disabled";
+                Minecraft.getInstance().player.sendMessage(new StringTextComponent("NoWeather " + status + "."), Minecraft.getInstance().player.getUniqueID());
+                event.setCanceled(true);
+                return;
+            }
 
             if (message.toLowerCase().startsWith("?fly ")) {
                 try {
@@ -629,9 +666,16 @@ public class SallieMod {
     }
 
 
+
+
+    public static double flySpeed = 0.1;
+    private static boolean wasFlying;
+    private static boolean canFly;
+
     @SubscribeEvent
     public void onRenderWorldLast(RenderWorldLastEvent event) {
         Minecraft mc = Minecraft.getInstance();
+
         if (mc.world != null && particlesEnabled) {
             mc.world.getAllEntities().forEach(entity -> {
                 if (entity instanceof ItemEntity) {
@@ -643,6 +687,7 @@ public class SallieMod {
         }
 
     }
+
 
     private void spawnParticles(World world, Vector3d itemPos) {
         double particleY = itemPos.y;
@@ -716,7 +761,6 @@ public class SallieMod {
         }
         return null;
     }
-
     @Mod.EventBusSubscriber(modid = SallieMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
     public static class ClientEventHandler {
         private static boolean hasTeleported = false;
@@ -728,41 +772,40 @@ public class SallieMod {
                     ClientPlayerEntity player = Minecraft.getInstance().player;
                     if (player != null && player.connection != null) {
                         float health = player.getHealth();
-
                         MatrixStack matrixStack = new MatrixStack();
-                        if (isTeleporting && Minecraft.getInstance().player != null) {
+
+                        if (isTeleporting && player != null) {
                             double distance = Math.sqrt(
-                                    Math.pow(Minecraft.getInstance().player.getPosX() - targetX, 2) +
-                                            Math.pow(Minecraft.getInstance().player.getPosY() - targetY, 2) +
-                                            Math.pow(Minecraft.getInstance().player.getPosZ() - targetZ, 2)
+                                    Math.pow(player.getPosX() - targetX, 2) +
+                                            Math.pow(player.getPosY() - targetY, 2) +
+                                            Math.pow(player.getPosZ() - targetZ, 2)
                             );
 
                             if (distance > 25.0) {
-                                float yaw = Minecraft.getInstance().player.rotationYaw;
-
+                                float yaw = player.rotationYaw;
                                 double radians = Math.toRadians(yaw);
                                 double forwardX = -Math.sin(radians);
                                 double forwardZ = Math.cos(radians);
 
-                                double newX = Minecraft.getInstance().player.getPosX() + forwardX * teleportDistance;
-                                double newZ = Minecraft.getInstance().player.getPosZ() + forwardZ * teleportDistance;
+                                double newX = player.getPosX() + forwardX * teleportDistance;
+                                double newZ = player.getPosZ() + forwardZ * teleportDistance;
 
                                 newX = approachZero(newX, targetX);
                                 newZ = approachZero(newZ, targetZ);
-                                double newY = approachVerticalPosition(Minecraft.getInstance().player.getPosY(), targetY);
+                                double newY = approachVerticalPosition(player.getPosY(), targetY);
 
                                 if (checkForCollision(newX, newY, newZ)) {
                                     newX -= forwardX * 10;
                                     newY += 20;
                                 }
 
-                                Minecraft.getInstance().player.connection.sendPacket(new CPlayerPacket.PositionPacket(newX, newY, newZ, true));
-                                Minecraft.getInstance().player.setPosition(newX, newY, newZ);
+                                player.connection.sendPacket(new CPlayerPacket.PositionPacket(newX, newY, newZ, true));
+                                player.setPosition(newX, newY, newZ);
                             } else {
                                 isTeleporting = false;
-                                Minecraft.getInstance().player.sendMessage(
+                                player.sendMessage(
                                         new StringTextComponent("Reached destination at (" + targetX + ", " + targetY + ", " + targetZ + ")."),
-                                        Minecraft.getInstance().player.getUniqueID()
+                                        player.getUniqueID()
                                 );
                             }
                         }
@@ -771,177 +814,195 @@ public class SallieMod {
                             followPlayer();
                         }
 
-                        if (AimbotKey.isPressed()) {
-                            aimbotEnabled = !aimbotEnabled;
-                            String toggleMessage = aimbotEnabled ? "Aimbot enabled." : "Aimbot disabled.";
-                            player.sendMessage(new StringTextComponent(toggleMessage), player.getUniqueID());
+                        handleHealthWarning(player, matrixStack, health);
+                        handleAutoTeleport(player, health);
+
+                        if (randomTeleportEnabled) {
+                            randomTeleport(player);
                         }
-
-                        if (aimbotEnabled) {
-                            aimbot.alwaysLookAtClosestPlayer();
-                        }
-                        if (NukerKey.isPressed()) {
-                            NukerEnabled = !NukerEnabled;
-                            String toggleMessage = NukerEnabled ? "Nuker enabled." : "Nuker disabled.";
-                            player.sendMessage(new StringTextComponent(toggleMessage), player.getUniqueID());
-                        }
-                        if (SpinKey.isPressed()) {
-                            Spin = !Spin;
-                            String toggleMessage = Spin ? "Spin enabled." : "Spin disabled.";
-                            player.sendMessage(new StringTextComponent(toggleMessage), player.getUniqueID());
-                        }
-                        if (Spin) {
-                            currentYaw += yawIncrement;
-
-                            if (currentYaw >= 360) {
-                                currentYaw -= 360;
-                            }
-                            if (rotationMode == 1) {
-                                float newYaw = player.rotationYaw + currentYaw;
-                                float newPitch = player.rotationPitch;
-
-
-                                player.connection.sendPacket(new CPlayerPacket.RotationPacket(newYaw, newPitch, true));
-                            } else if (rotationMode == 2) {
-                                player.rotationYawHead = player.rotationYaw + currentYaw;
-                                player.rotationPitch = player.rotationPitch;
-
-
-                            }
-
-
-                        }
-                        if (NukerEnabled) {
-                            Nuker.breakNearbyBlocks();
-                        }
-                        if (CMDSpammerEnabled) {
-                            tickCounter++;
-
-                            if (tickCounter >= commandDelay) {
-                                tickCounter = 0;
-
-                                if (ToucheCMD.contains("/")) {
-                                    ToucheCMD = ToucheCMD.replace("/", "");
-                                }
-
-                                if (!ToucheCMD.isEmpty()) {
-                                    player.sendChatMessage("/"+ToucheCMD);
-                                }
-                            }
-                        }
-
-                        if (KillAura.isPressed()) {
-                            killauraEnabled = !killauraEnabled;
-                            String toggleMessage = killauraEnabled ? "Killaura enabled." : "Killaura disabled.";
-                            Minecraft.getInstance().player.sendMessage(new StringTextComponent(toggleMessage), Minecraft.getInstance().player.getUniqueID());
-                        }
-                        if (CMDSpammer.isPressed()) {
-                            CMDSpammerEnabled = !CMDSpammerEnabled;
-                            String toggleMessage = CMDSpammerEnabled ? "CMDSpammer enabled" : "CMDSpammer disabled";
-                            Minecraft.getInstance().player.sendMessage(new StringTextComponent(toggleMessage), Minecraft.getInstance().player.getUniqueID());
-                        }
-
-
-                        if (teleportKey.isPressed()) {
-                            double newY = player.getPosY() + SallieMod.teleportHeight;
-                            player.connection.sendPacket(new CPlayerPacket.PositionPacket(player.getPosX(), newY, player.getPosZ(), true));
-                            player.setPosition(player.getPosX(), newY, player.getPosZ());
-                        }
-                        if (toggleParticlesKey.isPressed()) {
-                            particlesEnabled = !particlesEnabled;
-                            String toggleMessage = particlesEnabled ? "Item Laser enabled." : "Item Laser disabled.";
-                            Minecraft.getInstance().player.sendMessage(new StringTextComponent(toggleMessage), Minecraft.getInstance().player.getUniqueID());
-                        }
-
-                        if (HClipKey.isPressed()) {
-                            float yaw = player.rotationYaw;
-                            double radians = Math.toRadians(yaw);
-                            double forwardX = -Math.sin(radians);
-                            double forwardZ = Math.cos(radians);
-                            double newX = player.getPosX() + forwardX * SallieMod.HclipFar;
-                            double newZ = player.getPosZ() + forwardZ * SallieMod.HclipFar;
-                            player.connection.sendPacket(new CPlayerPacket.PositionPacket(newX, player.getPosY(), newZ, true));
-                            player.setPosition(newX, player.getPosY(), newZ);
-                        }
-
-                        if (teleportToggleKey.isPressed()) {
-                            randomTeleportEnabled  = !randomTeleportEnabled ;
-                            String toggleMessage = randomTeleportEnabled  ? "RandomTeleport enabled." : "RandomTeleport disabled.";
-                            Minecraft.getInstance().player.sendMessage(new StringTextComponent(toggleMessage), Minecraft.getInstance().player.getUniqueID());
-                        }
-
-                        if (StashKey.isPressed()) {
-                            StashEnabled = !StashEnabled;
-                            String toggleMessage = StashEnabled  ? "Stash enabled." : "Stash disabled.";
-                            Minecraft.getInstance().player.sendMessage(new StringTextComponent(toggleMessage), Minecraft.getInstance().player.getUniqueID());
-                        }
-
-
 
                         if (killauraEnabled) {
                             entityAttacker.attackNearbyEntities();
                         }
-                        if (Crasher) {
-                            Minecraft.getInstance().player.sendMessage(new StringTextComponent("Just enable timer and fly from aristois (Fly 3.9) (Timer 4)"), Minecraft.getInstance().player.getUniqueID());
+
+                        if (NukerEnabled) {
+                            Nuker.breakNearbyBlocks();
                         }
 
-                        if (health < 500) {
-                            String alertMessage = "ALERT YOU CAN GET ONE-SHOT";
-                            int alertColor = 0x8B0000;
+                        if (CMDSpammerEnabled) {
+                            String command = ToucheCMD.replaceAll("/", "");
 
-                            int x = 20;
-                            int y = 10;
+                            command = "/" + command;
 
-                            Minecraft.getInstance().fontRenderer.drawStringWithShadow(matrixStack, alertMessage, x, y, alertColor);
+                            player.sendChatMessage(command);
+                        }
+                        if (aimbotEnabled) {
+                            aimbot.alwaysLookAtClosestPlayer();
                         }
 
-                        ResourceLocation dimension = player.world.getDimensionKey().getLocation();
-                        if (autoTeleportEnabled && dimension.equals(World.OVERWORLD.getLocation())) {
-                            if (health < 500 && !hasTeleported) {
-                                LOGGER.info("Player health is below 500 in the Overworld. Executing command: /team home");
-                                player.sendChatMessage("/team home");
-                                hasTeleported = true;
-                            } else if (health >= 500) {
-                                hasTeleported = false;
+
+
+                        if (Spin) {
+                            handleSpinRotation(player);
+                        }
+                        if (FakeCreativeEnabled) {
+                            MakeCreative(player);
+                        }
+
+                        if (NoWeatherEnabled) {
+                            if (Minecraft.getInstance().world != null) {
+                                Minecraft.getInstance().world.setThunderStrength(0);
+                                Minecraft.getInstance().world.setRainStrength(0);
                             }
                         }
 
-
-                        if (randomTeleportEnabled) {
-                            double randomValue = Math.random() * 100;
-
-                            if (randomValue < 47) {
-                                double newX = player.getPosX() + (Math.random() < 0.5 ? 10 : -10);
-                                player.connection.sendPacket(new CPlayerPacket.PositionPacket(newX, player.getPosY(), player.getPosZ(), player.isOnGround()));
-                            } else if (randomValue < 94) {
-                                double newZ = player.getPosZ() + (Math.random() < 0.5 ? 10 : -10);
-                                player.connection.sendPacket(new CPlayerPacket.PositionPacket(player.getPosX(), player.getPosY(), newZ, player.isOnGround()));
-                            } else if (randomValue < 100) {
-                                double newY = player.getPosY() + (Math.random() < 0.5 ? 10 : -10);
-                                player.connection.sendPacket(new CPlayerPacket.PositionPacket(player.getPosX(), newY, player.getPosZ(), player.isOnGround()));
-                            }
-                        }
-
-                        if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().player != null) {
-                            if (Minecraft.getInstance().player.isElytraFlying()) {
-                                return;
-                            }
-
-                            if (Minecraft.getInstance().player.fallDistance <= 0.0F && !Minecraft.getInstance().player.isHandActive()) {
-                                CPlayerPacket packet = new CPlayerPacket(Minecraft.getInstance().player.isOnGround());
-                                CPlayerPacket newPacket = new CPlayerPacket(false);
-                                Minecraft.getInstance().player.connection.sendPacket(newPacket);
-                            }
-                        }
-                    } else {
                     }
                 }
             } catch (Exception e) {
                 LOGGER.error("Error during client tick event: ", e);
             }
         }
+
+        @SubscribeEvent
+        public static void onKeyPress(InputEvent.KeyInputEvent event) {
+            ClientPlayerEntity player = Minecraft.getInstance().player;
+            if (player == null) return;
+
+            if (AimbotKey.isPressed()) {
+                aimbotEnabled = !aimbotEnabled;
+                player.sendMessage(new StringTextComponent(aimbotEnabled ? "Aimbot enabled." : "Aimbot disabled."), player.getUniqueID());
+            }
+            if (FakeCreativeKey.isPressed()) {
+                FakeCreativeEnabled = !FakeCreativeEnabled;
+
+                if (!FakeCreativeEnabled) {
+                    MakeSurvival(player);
+                    player.sendMessage(new StringTextComponent("Fake Creative disabled."), player.getUniqueID());
+                } else {
+                    player.sendMessage(new StringTextComponent("Fake Creative enabled."), player.getUniqueID());
+                }
+            }
+
+
+            if (NukerKey.isPressed()) {
+                NukerEnabled = !NukerEnabled;
+                player.sendMessage(new StringTextComponent(NukerEnabled ? "Nuker enabled." : "Nuker disabled."), player.getUniqueID());
+            }
+
+            if (SpinKey.isPressed()) {
+                Spin = !Spin;
+                player.sendMessage(new StringTextComponent(Spin ? "Spin enabled." : "Spin disabled."), player.getUniqueID());
+            }
+
+            if (CMDSpammer.isPressed()) {
+                CMDSpammerEnabled = !CMDSpammerEnabled;
+                player.sendMessage(new StringTextComponent(CMDSpammerEnabled ? "CMDSpammer enabled" : "CMDSpammer disabled"), player.getUniqueID());
+            }
+
+            if (KillAura.isPressed()) {
+                killauraEnabled = !killauraEnabled;
+                player.sendMessage(new StringTextComponent(killauraEnabled ? "Killaura enabled." : "Killaura disabled."), player.getUniqueID());
+            }
+
+            if (teleportKey.isPressed()) {
+                double newY = player.getPosY() + SallieMod.teleportHeight;
+                player.setPosition(player.getPosX(), newY, player.getPosZ());
+            }
+
+            if (toggleParticlesKey.isPressed()) {
+                particlesEnabled = !particlesEnabled;
+                player.sendMessage(new StringTextComponent(particlesEnabled ? "Item Laser enabled." : "Item Laser disabled."), player.getUniqueID());
+            }
+
+            if (HClipKey.isPressed()) {
+                float yaw = player.rotationYaw;
+                double radians = Math.toRadians(yaw);
+                double forwardX = -Math.sin(radians);
+                double forwardZ = Math.cos(radians);
+                double newX = player.getPosX() + forwardX * SallieMod.HclipFar;
+                double newZ = player.getPosZ() + forwardZ * SallieMod.HclipFar;
+                player.connection.sendPacket(new CPlayerPacket.PositionPacket(newX, player.getPosY(), newZ, true));
+                player.setPosition(newX, player.getPosY(), newZ);
+            }
+
+
+            if (teleportToggleKey.isPressed()) {
+                randomTeleportEnabled = !randomTeleportEnabled;
+                player.sendMessage(new StringTextComponent(randomTeleportEnabled ? "RandomTeleport enabled." : "RandomTeleport disabled."), player.getUniqueID());
+            }
+
+            if (StashKey.isPressed()) {
+                StashEnabled = !StashEnabled;
+                player.sendMessage(new StringTextComponent(StashEnabled ? "Stash enabled." : "Stash disabled."), player.getUniqueID());
+            }
+        }}
+
+    private static void handleSpinRotation(ClientPlayerEntity player) {
+        currentYaw += yawIncrement;
+        if (currentYaw >= 360) {
+            currentYaw -= 360;
+        }
+        if (rotationMode == 1) {
+            float newYaw = player.rotationYaw + currentYaw;
+            float newPitch = player.rotationPitch;
+            player.connection.sendPacket(new CPlayerPacket.RotationPacket(newYaw, newPitch, true));
+        } else if (rotationMode == 2) {
+            player.rotationYawHead = player.rotationYaw + currentYaw;
+            player.rotationPitch = player.rotationPitch;
+        }
     }
 
+    private static void handleHealthWarning(ClientPlayerEntity player, MatrixStack matrixStack, float health) {
+        if (health < 500) {
+            String alertMessage = "ALERT YOU CAN GET ONE-SHOT";
+            int alertColor = 0x8B0000;
+            int x = 20;
+            int y = 10;
+            Minecraft.getInstance().fontRenderer.drawStringWithShadow(matrixStack, alertMessage, x, y, alertColor);
+        }
+    }
+
+
+    private static void handleAutoTeleport(ClientPlayerEntity player, float health) {
+        ResourceLocation dimension = player.world.getDimensionKey().getLocation();
+        if (autoTeleportEnabled && dimension.equals(World.OVERWORLD.getLocation())) {
+            if (health < 500 && !hasTeleported) {
+                LOGGER.info("Player health is below 500 in the Overworld. Executing command: /team home");
+                player.sendChatMessage("/team home");
+                hasTeleported = true;
+            } else if (health >= 500) {
+                hasTeleported = false;
+            }
+        }
+    }
+
+
+    private static void MakeCreative(ClientPlayerEntity player) {
+        Minecraft.getInstance().playerController.setGameType(GameType.CREATIVE);
+
+    }
+
+
+    private static void MakeSurvival(ClientPlayerEntity player) {
+        Minecraft.getInstance().playerController.setGameType(GameType.SURVIVAL);
+
+    }
+
+
+    private static void randomTeleport(ClientPlayerEntity player) {
+        double randomValue = Math.random() * 100;
+
+        if (randomValue < 47) {
+            double newX = player.getPosX() + (Math.random() < 0.5 ? 10 : -10);
+            player.connection.sendPacket(new CPlayerPacket.PositionPacket(newX, player.getPosY(), player.getPosZ(), player.isOnGround()));
+        } else if (randomValue < 94) {
+            double newZ = player.getPosZ() + (Math.random() < 0.5 ? 10 : -10);
+            player.connection.sendPacket(new CPlayerPacket.PositionPacket(player.getPosX(), player.getPosY(), newZ, player.isOnGround()));
+        } else if (randomValue < 100) {
+            double newY = player.getPosY() + (Math.random() < 0.5 ? 10 : -10);
+            player.connection.sendPacket(new CPlayerPacket.PositionPacket(player.getPosX(), newY, player.getPosZ(), player.isOnGround()));
+        }
+    }
 
 
 
