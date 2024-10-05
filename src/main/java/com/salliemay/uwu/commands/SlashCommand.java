@@ -27,7 +27,6 @@ public class SlashCommand {
 
                                     if (colorString.matches("^[0-9a-fA-F]{6}$") || colorString.matches("^#[0-9a-fA-F]{6}$")) {
                                         try {
-                                            // Prepend # if not present
                                             if (!colorString.startsWith("#")) {
                                                 colorString = "#" + colorString;
                                             }

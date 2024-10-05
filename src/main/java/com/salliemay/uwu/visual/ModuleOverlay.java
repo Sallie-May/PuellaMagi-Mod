@@ -65,15 +65,26 @@ public class ModuleOverlay {
         if (SallieMod.randomTeleportEnabled) {
             activeModules.add("Random Teleport (Enabled)");
         }
+        if (SallieMod.NoBadEffectEnabled) {
+            activeModules.add("NoBadEffect (Enabled)");
+        }
+        if (SallieMod.FlightEnabled) {
+            activeModules.add("Flight (Enabled)");
+        }
 
         if (SallieMod.aimbotEnabled) {
             activeModules.add("Aimbot Enabled (Range : "+SallieMod.aimbotRange+" )");
+        }
+        if (SallieMod.NoHurtCamEnabled) {
+            activeModules.add("NoHurtCam (Enabled)");
         }
 
         if (!SallieMod.suffixDisabled) {
             activeModules.add("Suffix (Enabled)");
         }
-
+        if (SallieMod.Velocity) {
+            activeModules.add("Velocity (Enabled)");
+        }
         if (SallieMod.NukerEnabled) {
             activeModules.add("Nuker (Enabled)");
         }
@@ -133,7 +144,7 @@ public class ModuleOverlay {
     }
 
     private static int getColorForPosition(float position, int[] gradientColors) {
-        float segmentLength = (float) gradientColors.length / 1.0f; // Since we're only interpolating over the whole string
+        float segmentLength = (float) gradientColors.length / 1.0f;
         int startSegment = (int) (position * (gradientColors.length - 1));
         int endSegment = Math.min(startSegment + 1, gradientColors.length - 1);
 

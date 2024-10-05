@@ -22,7 +22,7 @@ public class RGBCam {
 
     @SubscribeEvent
     public static void onRenderOverlay(RenderGameOverlayEvent.Post event) {
-        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL && enabled) { // Check if LSD is enabled
+        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL && enabled) {
             renderOverlay(event.getMatrixStack());
         }
     }
@@ -30,7 +30,6 @@ public class RGBCam {
     private static void renderOverlay(MatrixStack matrixStack) {
         if (mc.player == null || mc.world == null) return;
 
-        // Generate random RGBA values
         int r = random.nextInt(256);
         int g = random.nextInt(256);
         int b = random.nextInt(256);

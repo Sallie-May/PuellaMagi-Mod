@@ -2,6 +2,7 @@ package com.salliemay.uwu;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.salliemay.uwu.combat.Aura;
 import com.salliemay.uwu.combat.Aimbot;
+import com.salliemay.uwu.movement.Fly;
 import com.salliemay.uwu.visual.*;
 import com.salliemay.uwu.world.Nuker;
 import com.salliemay.uwu.world.StashLogger;
@@ -11,6 +12,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.GameType;
@@ -82,6 +85,10 @@ public class SallieMod {
     private static final KeyBinding SpinKey = new KeyBinding("Spin", GLFW.GLFW_RELEASE_BEHAVIOR_NONE, "SallieConfig");
     private static final KeyBinding FakeCreativeKey = new KeyBinding("FakeCreative", GLFW.GLFW_RELEASE_BEHAVIOR_NONE, "SallieConfig");
     private static final KeyBinding RGBCameraKeys = new KeyBinding("RGBCamera", GLFW.GLFW_RELEASE, "SallieConfig");
+    private static final KeyBinding VelocityKey = new KeyBinding("Velocity", GLFW.GLFW_RELEASE, "SallieConfig");
+    private static final KeyBinding NoBadEffectKey = new KeyBinding("NoBadEffect", GLFW.GLFW_RELEASE, "SallieConfig");
+    private static final KeyBinding NoHurtCamKey = new KeyBinding("NoHurtCam", GLFW.GLFW_RELEASE, "SallieConfig");
+    private static final KeyBinding FlightKey = new KeyBinding("Fly", GLFW.GLFW_RELEASE, "SallieConfig");
     private static String targetPlayerName = null;
 
     public static boolean randomTeleportEnabled = false;
@@ -93,13 +100,15 @@ public class SallieMod {
     public static boolean Spin = false;
     public static boolean FakeCreativeEnabled = false;
     public static boolean NoWeatherEnabled = true;
+    public static boolean NoBadEffectEnabled = true;
+    public static boolean Velocity = false;
+    public static boolean NoHurtCamEnabled = true;
     public static int rotationMode = 1;
 
     private static float currentYaw = 0;
     private static final float yawIncrement = 45;
 
 
-    public static float flyspeed =  0.05f;
     private static boolean hasTeleported = false;
 
     public static RGBCam rgbModule;
@@ -112,6 +121,7 @@ public class SallieMod {
     public static boolean suffixDisabled = true;
     public static double teleportHeight = 2.0;
     public static double HclipFar = 2.0;
+    public static float FlySpeed = 3.0f;
     public static double AuraRange = 15.0;
     private static final Aimbot aimbot = new Aimbot();
     public static boolean StashEnabled = false;
@@ -119,12 +129,14 @@ public class SallieMod {
     public static boolean CMDSpammerEnabled = false;
 
     public static boolean particlesEnabled = false;
+    public static boolean FlightEnabled = false;
 
 
 
     public SallieMod() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         MinecraftForge.EVENT_BUS.register(HealthOverlay.class);
+        MinecraftForge.EVENT_BUS.register(Fly.class);
         MinecraftForge.EVENT_BUS.register(Aura.class);
         MinecraftForge.EVENT_BUS.register(Aimbot.class);
         MinecraftForge.EVENT_BUS.register(NoFog.class);
@@ -153,6 +165,10 @@ public class SallieMod {
             ClientRegistry.registerKeyBinding(SpinKey);
             ClientRegistry.registerKeyBinding(FakeCreativeKey);
             ClientRegistry.registerKeyBinding(RGBCameraKeys);
+            ClientRegistry.registerKeyBinding(NoBadEffectKey);
+            ClientRegistry.registerKeyBinding(VelocityKey);
+            ClientRegistry.registerKeyBinding(NoHurtCamKey);
+            ClientRegistry.registerKeyBinding(FlightKey);
         } catch (Exception e) {
             LOGGER.error("Error during client setup: ", e);
         }
@@ -179,7 +195,7 @@ public class SallieMod {
             LOGGER.error("Error during block registry: ", e);
         }
     }
-    private final Minecraft mc = Minecraft.getInstance();
+    private static final Minecraft mc = Minecraft.getInstance();
 
     private static final float EXTENDED_REACH = 10.0F;
 
@@ -610,18 +626,24 @@ public class SallieMod {
                     String[] parts = message.split(" ");
                     if (parts.length == 2) {
                         float speed = Float.parseFloat(parts[1]);
-                        double flyspeed =  speed;
 
-                        Minecraft.getInstance().player.sendMessage(new StringTextComponent("Fly changed to " + flyspeed + "Speed"), Minecraft.getInstance().player.getUniqueID());
+                        if (speed < 0.01F || speed > 1000.0F) {
+                            Minecraft.getInstance().player.sendMessage(new StringTextComponent("Speed must be between 0.01 and 1000.0!"), Minecraft.getInstance().player.getUniqueID());
+                        } else {
+                            FlySpeed = speed;
 
-                        event.setCanceled(true);
+                            Minecraft.getInstance().player.sendMessage(new StringTextComponent("Fly speed changed to " + FlySpeed), Minecraft.getInstance().player.getUniqueID());
+                        }
                     }
-                } catch (NumberFormatException e) {
-                    Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid Fly Speed I want an <int>."), Minecraft.getInstance().player.getUniqueID());
 
+                    event.setCanceled(true);
+                } catch (NumberFormatException e) {
+                    Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid Fly Speed. Please enter a valid number."), Minecraft.getInstance().player.getUniqueID());
                     event.setCanceled(true);
                 }
             }
+
+
 
             if (message.startsWith("?suffixenable")) {
                 suffixDisabled = false;
@@ -638,14 +660,41 @@ public class SallieMod {
         }
     }
 
+    public static boolean NoBadEffect = true;
+
     @SubscribeEvent
     public void onRenderGameOverlay(RenderGameOverlayEvent event) {
         if (event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
-            if (Minecraft.getInstance().player.isPotionActive(Effects.BLINDNESS)) {
-                event.setCanceled(true);
+            Minecraft mc = Minecraft.getInstance();
+
+
+            if (mc.player != null && NoBadEffect) {
+                List<Effect> effectsToRemove = new ArrayList<>();
+
+                for (EffectInstance effectInstance : mc.player.getActivePotionEffects()) {
+                    Effect effect = effectInstance.getPotion();
+                    if (isNegativeEffect(effect)) {
+                        effectsToRemove.add(effect);
+                    }
+                }
+
+                for (Effect effect : effectsToRemove) {
+                    mc.player.removePotionEffect(effect);
+                }
             }
         }
     }
+
+    private boolean isNegativeEffect(Effect effect) {
+        return effect == Effects.BLINDNESS ||
+                effect == Effects.POISON ||
+                effect == Effects.WITHER ||
+                effect == Effects.NAUSEA ||
+                effect == Effects.SLOWNESS ||
+                effect == Effects.WEAKNESS ||
+                effect == Effects.HUNGER;
+    }
+
 
     @SubscribeEvent
     public static void onRenderFog(EntityViewRenderEvent.RenderFogEvent event) {
@@ -667,10 +716,6 @@ public class SallieMod {
 
 
 
-
-    public static double flySpeed = 0.1;
-    private static boolean wasFlying;
-    private static boolean canFly;
 
     @SubscribeEvent
     public void onRenderWorldLast(RenderWorldLastEvent event) {
@@ -810,6 +855,11 @@ public class SallieMod {
                             }
                         }
 
+                        if (FlightEnabled) {
+
+                            
+                        Fly.applyMovement();}
+
                         if (targetPlayerName != null) {
                             followPlayer();
                         }
@@ -826,7 +876,7 @@ public class SallieMod {
                         }
 
                         if (NukerEnabled) {
-                            Nuker.breakNearbyBlocks();
+                            Nuker.tick();
                         }
 
                         if (CMDSpammerEnabled) {
@@ -840,7 +890,15 @@ public class SallieMod {
                             aimbot.alwaysLookAtClosestPlayer();
                         }
 
+                        if (aimbotEnabled) {
+                            aimbot.alwaysLookAtClosestPlayer();
+                        }
 
+                        if (Velocity) {
+                            if (mc.player.hurtTime > 0) {
+                                mc.player.setMotion(0, 0, 0);
+                            }
+                        }
 
                         if (Spin) {
                             handleSpinRotation(player);
@@ -894,6 +952,11 @@ public class SallieMod {
                 player.sendMessage(new StringTextComponent(Spin ? "Spin enabled." : "Spin disabled."), player.getUniqueID());
             }
 
+            if (FlightKey.isPressed()) {
+                FlightEnabled = !FlightEnabled;
+                player.sendMessage(new StringTextComponent(FlightEnabled ? "Flight enabled." : "Flight disabled."), player.getUniqueID());
+            }
+
             if (CMDSpammer.isPressed()) {
                 CMDSpammerEnabled = !CMDSpammerEnabled;
                 player.sendMessage(new StringTextComponent(CMDSpammerEnabled ? "CMDSpammer enabled" : "CMDSpammer disabled"), player.getUniqueID());
@@ -931,6 +994,10 @@ public class SallieMod {
                 player.sendMessage(new StringTextComponent(randomTeleportEnabled ? "RandomTeleport enabled." : "RandomTeleport disabled."), player.getUniqueID());
             }
 
+            if (NoHurtCamKey.isPressed()) {
+                NoHurtCamEnabled = !NoHurtCamEnabled;
+                player.sendMessage(new StringTextComponent(NoHurtCamEnabled ? "NoHurtCam enabled." : "NoHurtCam disabled."), player.getUniqueID());
+            }
             if (StashKey.isPressed()) {
                 StashEnabled = !StashEnabled;
                 player.sendMessage(new StringTextComponent(StashEnabled ? "Stash enabled." : "Stash disabled."), player.getUniqueID());

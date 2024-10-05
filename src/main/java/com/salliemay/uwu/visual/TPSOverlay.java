@@ -17,7 +17,6 @@ public class TPSOverlay {
     private static final EvictingQueue<Float> clientTicks = EvictingQueue.create(20);
     private static final EvictingQueue<Float> serverTPS = EvictingQueue.create(3);
 
-    // Time tracking variables
     private static long systemTime1 = 0;
     private static long systemTime2 = 0;
     private static long serverTime = 0;
