@@ -78,6 +78,9 @@ public class ModuleOverlay {
         if (SallieMod.NoHurtCamEnabled) {
             activeModules.add("NoHurtCam (Enabled)");
         }
+        if (SallieMod.NoFallEnabled) {
+            activeModules.add("NoFall (Enabled)");
+        }
 
         if (!SallieMod.suffixDisabled) {
             activeModules.add("Suffix (Enabled)");

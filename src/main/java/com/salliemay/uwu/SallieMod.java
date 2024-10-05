@@ -83,10 +83,12 @@ public class SallieMod {
     private static final KeyBinding NoBadEffectKey = new KeyBinding("NoBadEffect", GLFW.GLFW_RELEASE, "SallieConfig");
     private static final KeyBinding NoHurtCamKey = new KeyBinding("NoHurtCam", GLFW.GLFW_RELEASE, "SallieConfig");
     private static final KeyBinding FlightKey = new KeyBinding("Fly", GLFW.GLFW_RELEASE, "SallieConfig");
+    private static final KeyBinding NoFall = new KeyBinding("NoFall", GLFW.GLFW_RELEASE, "SallieConfig");
     private static String targetPlayerName = null;
 
 
     public static boolean randomTeleportEnabled = config.randomTeleportEnabled;
+    public static boolean NoFallEnabled = config.NoFall;
     public static boolean killauraEnabled = config.killauraEnabled;
     public static boolean autoTeleportEnabled = config.autoTeleportEnabled;
     public static boolean aimbotEnabled = config.aimbotEnabled;
@@ -164,6 +166,7 @@ public class SallieMod {
             ClientRegistry.registerKeyBinding(VelocityKey);
             ClientRegistry.registerKeyBinding(NoHurtCamKey);
             ClientRegistry.registerKeyBinding(FlightKey);
+            ClientRegistry.registerKeyBinding(NoFall);
         } catch (Exception e) {
             LOGGER.error("Error during client setup: ", e);
         }
@@ -864,7 +867,12 @@ public class SallieMod {
             }
         }
     }
-
+    private static void NoFalling() {
+        ClientPlayerEntity players = net.minecraft.client.Minecraft.getInstance().player;
+        if (players != null) {
+            players.connection.sendPacket(new CPlayerPacket(true));
+        }
+    }
     private static Entity findPlayerByName(String name) {
         for (Entity entity : Minecraft.getInstance().world.getAllEntities()) {
             if (entity instanceof PlayerEntity && entity.getName().getString().equalsIgnoreCase(name)) {
@@ -959,10 +967,9 @@ public class SallieMod {
                             aimbot.alwaysLookAtClosestPlayer();
                         }
 
-                        if (velocity) {
-                            if (mc.player.hurtTime > 0) {
-                                mc.player.setMotion(0, 0, 0);
-                            }
+                        if (player != null && player.hurtTime > 0 && velocity) {
+                            player.hurtTime = 0;
+                            player.setMotion(0, player.getMotion().y, 0);
                         }
 
                         if (spin) {
@@ -970,6 +977,11 @@ public class SallieMod {
                         }
                         if (fakeCreativeEnabled) {
                             MakeCreative(player);
+                        }
+                        if (NoFallEnabled) {
+                            NoFalling();
+                            mc.player.fallDistance = 0.0F;
+
                         }
 
                         if (noWeatherEnabled) {
@@ -1024,6 +1036,13 @@ public class SallieMod {
 
             }
 
+            if (VelocityKey.isPressed()) {
+                velocity = !velocity;
+                player.sendMessage(new StringTextComponent(velocity ? "Velocity enabled." : "Velocity disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+
+            }
+
             if (FlightKey.isPressed()) {
                 flightEnabled = !flightEnabled;
                 player.sendMessage(new StringTextComponent(flightEnabled ? "Flight enabled." : "Flight disabled."), player.getUniqueID());
@@ -1049,6 +1068,11 @@ public class SallieMod {
                 double newY = player.getPosY() + SallieMod.teleportHeight;
                 player.setPosition(player.getPosX(), newY, player.getPosZ());
                 ConfigManager.saveConfig(config);
+
+            }
+
+            if (NoFall.isPressed()) {
+                NoFallEnabled = !NoFallEnabled;
 
             }
 

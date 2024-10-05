@@ -37,6 +37,7 @@ public class ConfigManager {
         public boolean particlesEnabled = false;
         public boolean suffixDisabled = true;
         public boolean showModules = true;
+        public boolean NoFall = false;
         public int rotationMode = 1;
         public int aimbotrange = 15;
         public int healthlimit = 1000;
