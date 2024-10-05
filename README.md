@@ -26,7 +26,7 @@
 - `?goto stop`: Stop teleporting.
 - `?autoteleport <on/off>`: Enable or disable automatic teleportation.
 - `?spin <1/2>: 1 is packet based, 2 is head based`: Change type of spinning.
-
+- `?fly <number>`: Change fly speed.
 ### Visual Commands
 - `?color <hexCode>`: Set the health text color using a hex code (e.g., `?color FF5733`).
 - `?suffix <text>`: Change the message suffix (e.g., `?suffix uwu`).
