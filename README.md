@@ -7,7 +7,7 @@
 - **Movement Utilities:** Adjust vertical and horizontal clipping (VClip/HClip), teleport to coordinates, fly, and more.
 - **Visual Commands:** Customize health text color, enable/disable message suffixes, and apply gradient effects.
 - **Utility Commands:** Command spamming tools for advanced users.
-- **Keybindings:** Quick access to various actions such as VClip, HClip, teleportation, aimbot.....
+- **Keybindings:** Quick access to various actions such as VClip, HClip, teleportation, aimbot, and more.
 
 ## Installation
 1. Download the latest release from the [releases page](https://github.com/Sallie-May/PuellaMagi-Mod/releases).
@@ -25,8 +25,8 @@
 - `?goto <Coordinate>`: Teleport to the specified coordinate.
 - `?goto stop`: Stop teleporting.
 - `?autoteleport <on/off>`: Enable or disable automatic teleportation.
-- `?spin <1/2>: 1 is packet based, 2 is head based`: Change type of spinning.
-- `?fly <number>`: Change fly speed.
+- `?spin <1/2>`: Change type of spinning (1 = packet-based, 2 = head-based).
+  
 ### Visual Commands
 - `?color <hexCode>`: Set the health text color using a hex code (e.g., `?color FF5733`).
 - `?suffix <text>`: Change the message suffix (e.g., `?suffix uwu`).
@@ -34,13 +34,12 @@
 - `?suffixenable`: Enable the message suffix if disabled.
 - `?gradient <index>`: Apply a gradient effect to the module (e.g., rainbow effect).
 - `?gradientlist`: List all available gradient colors.
-- `?noweather`: Will disable or enable noweather
 
 ### Utility Commands
 - `?cmdspammer delay <ticks>`: Set the delay (in ticks) between spamming commands.
 - `?cmdspammer command <command>`: Define the command to be spammed.
-- `?discord`: To get the discord URL
-  
+- `?discord`: Get the Discord invite URL.
+
 ### Key Commands
 - **Press** `[Teleport Key]` to VClip (use `?vclip` to modify).
 - **Press** `[Fly Key]` to fly (use `?fly <speed>` to modify).
@@ -48,18 +47,17 @@
 - **Press** `[Teleport Toggle Key]` to random teleport.
 - **Press** `[Particles Key]` to enable Laser ESP.
 - **Press** `[Aimbot Key]` to toggle Aimbot.
-- **Press** `[Killaura Key]` to toggle Killaura (15 blocks).
 - **Press** `[CMD Spammer Key]` to enable the CMD Spammer.
-- **Press** `[Spin]` to enable the Spin.
-- **Press** `[Fake Creative]` to enable the Fake Creative.
-- **Press** `[Velocity]` to enable Velocity
-- **Press** `[NoBadEffect]` to disable/enable NoBadEffect
-- **Press** `[NoHurtCam]` to disable/enable NoHurtCam
-- **Press** `[NoFall]` to disable/enable NoFall
+- **Press** `[Spin Key]` to enable Spin mode.
+- **Press** `[Fake Creative Key]` to enable Fake Creative mode.
+- **Press** `[Velocity Key]` to toggle Velocity.
+- **Press** `[NoBadEffect Key]` to toggle NoBadEffect.
+- **Press** `[NoHurtCam Key]` to toggle NoHurtCam.
+- **Press** `[NoFall Key]` to toggle NoFall.
 
 ## Bonus Features
 - **Auto Teleport:** Automatically teleport if health drops below 500 HP.
 - **Health Display:** Your current health is shown in the top-left corner of the screen.
 
 ## Contributing
-If you'd like to contribute to the development of FurRiotMod, feel free to fork the repository and submit a pull request. We welcome improvements and new features!
+If you'd like to contribute to the development of PuellaMagiMod, feel free to fork the repository and submit a pull request. We welcome improvements and new features!
