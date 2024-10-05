@@ -39,6 +39,9 @@
 - `?cmdspammer delay <ticks>`: Set the delay (in ticks) between spamming commands.
 - `?cmdspammer command <command>`: Define the command to be spammed.
 - `?discord`: Get the Discord invite URL.
+- `?friendslist `: Get the friends list.
+- `?friend add (username)`: Add username to the friend list.
+- `?friend remove (username)`: Remove friend from the friend list.
 
 ### Key Commands
 - **Press** `[Teleport Key]` to VClip (use `?vclip` to modify).
