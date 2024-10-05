@@ -1,5 +1,4 @@
 package com.salliemay.uwu;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.salliemay.uwu.combat.Aura;
 import com.salliemay.uwu.combat.Aimbot;
 import com.salliemay.uwu.movement.Fly;
@@ -10,15 +9,14 @@ import com.salliemay.uwu.config.ConfigManager;
 
 import java.awt.Desktop;
 import java.net.URI;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.GameType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -50,12 +48,10 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
-
 import java.awt.Color;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 @Mod(SallieMod.MOD_ID)
@@ -64,7 +60,7 @@ public class SallieMod {
     private static final Logger LOGGER = LogManager.getLogger();
     public static int healthTextColor = 0xFF64E0;
 
-    private static ConfigManager.Config config = ConfigManager.loadConfig();
+    private static final ConfigManager.Config config = ConfigManager.loadConfig();
 
 
     private static final KeyBinding teleportKey = new KeyBinding("VClip", GLFW.GLFW_KEY_K, "SallieConfig");
@@ -86,6 +82,7 @@ public class SallieMod {
     private static final KeyBinding NoFall = new KeyBinding("NoFall", GLFW.GLFW_RELEASE, "SallieConfig");
     private static String targetPlayerName = null;
 
+    private final com.salliemay.uwu.friend.FriendManager friendManager = new com.salliemay.uwu.friend.FriendManager();
 
     public static boolean randomTeleportEnabled = config.randomTeleportEnabled;
     public static boolean NoFallEnabled = config.NoFall;
@@ -147,7 +144,6 @@ public class SallieMod {
     }
 
 
-
     private void doClientStuff(FMLClientSetupEvent event) {
         try {
             ClientRegistry.registerKeyBinding(teleportKey);
@@ -167,6 +163,7 @@ public class SallieMod {
             ClientRegistry.registerKeyBinding(NoHurtCamKey);
             ClientRegistry.registerKeyBinding(FlightKey);
             ClientRegistry.registerKeyBinding(NoFall);
+
         } catch (Exception e) {
             LOGGER.error("Error during client setup: ", e);
         }
@@ -190,6 +187,7 @@ public class SallieMod {
             LOGGER.error("Error during block registry: ", e);
         }
     }
+
     private static final Minecraft mc = Minecraft.getInstance();
 
     private static final float EXTENDED_REACH = 10.0F;
@@ -198,7 +196,6 @@ public class SallieMod {
     private static double targetX, targetY, targetZ;
     private static double teleportDistance = 5.0;
     private static List<String> activeModules = new ArrayList<>();
-
 
 
     @SubscribeEvent
@@ -241,7 +238,6 @@ public class SallieMod {
                             Minecraft.getInstance().player.getUniqueID()
                     );
                 }
-                event.setCanceled(true);
                 return;
             }
             if (message.startsWith("?aimbot ")) {
@@ -268,7 +264,6 @@ public class SallieMod {
                             Minecraft.getInstance().player.getUniqueID()
                     );
                 }
-                event.setCanceled(true);
                 return;
             }
 
@@ -280,10 +275,8 @@ public class SallieMod {
                         new StringTextComponent("Auto teleport on low health enabled."),
                         Minecraft.getInstance().player.getUniqueID()
                 );
-                event.setCanceled(true);
                 return;
             }
-
 
 
             if (message.startsWith("?killaura ")) {
@@ -310,7 +303,6 @@ public class SallieMod {
                             Minecraft.getInstance().player.getUniqueID()
                     );
                 }
-                event.setCanceled(true);
                 return;
             }
 
@@ -323,7 +315,6 @@ public class SallieMod {
                         new StringTextComponent("Auto teleport on low health disabled."),
                         Minecraft.getInstance().player.getUniqueID()
                 );
-                event.setCanceled(true);
                 return;
             }
 
@@ -334,7 +325,6 @@ public class SallieMod {
                         new StringTextComponent("https://discord.gg/Dr9T8kA7uM to join !\n?discord open (to open the webpage directly)"),
                         Minecraft.getInstance().player.getUniqueID()
                 );
-                event.setCanceled(true);
                 return;
             }
 
@@ -355,10 +345,8 @@ public class SallieMod {
                             Minecraft.getInstance().player.getUniqueID()
                     );
                 }
-                event.setCanceled(true);
                 return;
             }
-
 
 
             if (message.equalsIgnoreCase("?help")) {
@@ -389,6 +377,10 @@ public class SallieMod {
                 helpMessage.append(TextFormatting.AQUA + "**UTILITY COMMANDS**\n");
                 helpMessage.append(TextFormatting.YELLOW + "- ?cmdspammer delay <ticks>: Change the delay between spamming commands (in ticks)\n");
                 helpMessage.append(TextFormatting.YELLOW + "- ?cmdspammer command <command>: Set the command to be spammed\n");
+                helpMessage.append(TextFormatting.YELLOW + "- ?discord : Give discord URL\n");
+                helpMessage.append(TextFormatting.YELLOW + "- ?friendslist : Get the friends list\n");
+                helpMessage.append(TextFormatting.YELLOW + "- ?friend add (username) : add user into the friend list\n");
+                helpMessage.append(TextFormatting.YELLOW + "- ?friend remove (username) : Remove the user from friend\n");
 
                 helpMessage.append(TextFormatting.AQUA + "**KEY COMMANDS**\n");
                 helpMessage.append(TextFormatting.YELLOW + "- PRESS " + teleportKey.getKey() + " TO VCLIP (USE ?vclip to modify)\n");
@@ -411,7 +403,6 @@ public class SallieMod {
                 helpMessage.append(TextFormatting.YELLOW + "**On top left corner you can see your health\n");
 
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent(helpMessage.toString()), Minecraft.getInstance().player.getUniqueID());
-                event.setCanceled(true);
                 return;
             }
 
@@ -421,7 +412,6 @@ public class SallieMod {
                         new StringTextComponent("Stopped following."),
                         Minecraft.getInstance().player.getUniqueID()
                 );
-                event.setCanceled(true);
                 return;
             }
 
@@ -432,20 +422,18 @@ public class SallieMod {
                         new StringTextComponent("Now following " + playerName),
                         Minecraft.getInstance().player.getUniqueID()
                 );
-                event.setCanceled(true);
                 return;
             }
 
 
             if (message.startsWith("?crash")) {
-                 crasher = !crasher;
+                crasher = !crasher;
                 ConfigManager.saveConfig(config);
 
                 Minecraft.getInstance().player.sendMessage(
                         new StringTextComponent("Crash enabled"),
                         Minecraft.getInstance().player.getUniqueID()
                 );
-                event.setCanceled(true);
                 return;
             }
 
@@ -487,7 +475,33 @@ public class SallieMod {
                             Minecraft.getInstance().player.getUniqueID()
                     );
                 }
-                event.setCanceled(true);
+                return;
+            }
+            if (message.startsWith("?friend add ")) {
+                String friendName = message.substring(12).trim();
+                friendManager.addFriend(friendName);
+                return;
+            }
+
+            if (message.startsWith("?friend remove ")) {
+                String friendName = message.substring(15).trim();
+                friendManager.removeFriend(friendName);
+                return;
+            }
+
+            if (message.equalsIgnoreCase("?friends")) {
+                StringBuilder friendList = new StringBuilder("Friends: ");
+                for (String friend : friendManager.getFriends()) {
+                    friendList.append(friend).append(", ");
+                }
+
+                if (friendList.length() > 8) {
+                    friendList.setLength(friendList.length() - 2);
+                } else {
+                    friendList.append("None");
+                }
+
+                Minecraft.getInstance().player.sendMessage(new StringTextComponent(friendList.toString()), Minecraft.getInstance().player.getUniqueID());
                 return;
             }
 
@@ -496,7 +510,6 @@ public class SallieMod {
                 ConfigManager.saveConfig(config);
 
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent("Suffix changed to '" + suffix + "'"), Minecraft.getInstance().player.getUniqueID());
-                event.setCanceled(true);
                 return;
             }
 
@@ -512,7 +525,6 @@ public class SallieMod {
                 } catch (ArrayIndexOutOfBoundsException e) {
                     Minecraft.getInstance().player.sendMessage(new StringTextComponent("Please specify a height."), Minecraft.getInstance().player.getUniqueID());
                 }
-                event.setCanceled(true);
                 return;
             }
             if (message.startsWith("?health")) {
@@ -523,17 +535,16 @@ public class SallieMod {
                         config.healthlimit = healthLimit;
                         ConfigManager.saveConfig(config);
 
-                        Minecraft.getInstance().player.sendMessage(new StringTextComponent("Health limit updated to: " + healthLimit),Minecraft.getInstance().player.getUniqueID());
+                        Minecraft.getInstance().player.sendMessage(new StringTextComponent("Health limit updated to: " + healthLimit), Minecraft.getInstance().player.getUniqueID());
                     } catch (NumberFormatException e) {
-                        Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid health limit: " + parts[1]),Minecraft.getInstance().player.getUniqueID());
+                        Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid health limit: " + parts[1]), Minecraft.getInstance().player.getUniqueID());
                     } catch (ArrayIndexOutOfBoundsException e) {
                         Minecraft.getInstance().player.sendMessage(new StringTextComponent("No health limit specified. Please provide a number."), Minecraft.getInstance().player.getUniqueID());
                     }
                 } else {
-                    Minecraft.getInstance().player.sendMessage(new StringTextComponent("Actual limit : "+ healthlimit  + "Usage: ?health <limit> tp change"), Minecraft.getInstance().player.getUniqueID());
+                    Minecraft.getInstance().player.sendMessage(new StringTextComponent("Actual limit : " + healthlimit + "Usage: ?health <limit> tp change"), Minecraft.getInstance().player.getUniqueID());
                 }
 
-                event.setCanceled(true);
                 return;
 
             }
@@ -550,7 +561,6 @@ public class SallieMod {
                 } catch (ArrayIndexOutOfBoundsException e) {
                     Minecraft.getInstance().player.sendMessage(new StringTextComponent("Please specify a distance."), Minecraft.getInstance().player.getUniqueID());
                 }
-                event.setCanceled(true);
                 return;
             }
             if (message.startsWith("?cmdspammer")) {
@@ -595,7 +605,6 @@ public class SallieMod {
                     Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid command format."), Minecraft.getInstance().player.getUniqueID());
                 }
 
-                event.setCanceled(true);
                 return;
             }
             if (message.startsWith("?tp ")) {
@@ -624,7 +633,6 @@ public class SallieMod {
                         );
                     }
                 }
-                event.setCanceled(true);
                 return;
             }
             if (message.equalsIgnoreCase("?gradientlist")) {
@@ -634,7 +642,7 @@ public class SallieMod {
                         Minecraft.getInstance().player.getUniqueID()
 
                 );
-                event.setCanceled(true);
+
                 return;
 
             }
@@ -660,7 +668,6 @@ public class SallieMod {
                                 Minecraft.getInstance().player.getUniqueID()
                         );
                     }
-                    event.setCanceled(true);
                     return;
                 }
             }
@@ -682,7 +689,6 @@ public class SallieMod {
                         Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid input. Please enter 1 for packet-based or 2 for head-based rotation."), Minecraft.getInstance().player.getUniqueID());
                     }
 
-                    event.setCanceled(true);
                     return;
                 }
             }
@@ -690,7 +696,6 @@ public class SallieMod {
                 suffixDisabled = true;
                 ConfigManager.saveConfig(config);
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent("Suffix disabled."), Minecraft.getInstance().player.getUniqueID());
-                event.setCanceled(true);
                 return;
             }
             if (message.startsWith("?noweather")) {
@@ -699,7 +704,6 @@ public class SallieMod {
 
                 String status = noWeatherEnabled ? "enabled" : "disabled";
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent("NoWeather " + status + "."), Minecraft.getInstance().player.getUniqueID());
-                event.setCanceled(true);
                 return;
             }
 
@@ -718,19 +722,15 @@ public class SallieMod {
                         }
                     }
 
-                    event.setCanceled(true);
                 } catch (NumberFormatException e) {
                     Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid Fly Speed. Please enter a valid number."), Minecraft.getInstance().player.getUniqueID());
-                    event.setCanceled(true);
                 }
             }
-
 
 
             if (message.startsWith("?suffixenable")) {
                 suffixDisabled = false;
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent("Suffix enabled."), Minecraft.getInstance().player.getUniqueID());
-                event.setCanceled(true);
                 return;
             }
 
@@ -775,6 +775,8 @@ public class SallieMod {
                 effect == Effects.WEAKNESS ||
                 effect == Effects.HUNGER;
     }
+
+
 
 
     @SubscribeEvent
@@ -944,7 +946,8 @@ public class SallieMod {
                         }
 
                         if (flightEnabled) {
-                            Fly.applyMovement();}
+                            Fly.applyMovement();
+                        }
 
 
                         if (targetPlayerName != null) {
@@ -1061,6 +1064,7 @@ public class SallieMod {
 
             }
 
+
             if (CMDSpammer.isPressed()) {
                 CMDSpammerEnabled = !CMDSpammerEnabled;
                 player.sendMessage(new StringTextComponent(CMDSpammerEnabled ? "CMDSpammer enabled" : "CMDSpammer disabled"), player.getUniqueID());
@@ -1084,6 +1088,7 @@ public class SallieMod {
 
             if (NoFall.isPressed()) {
                 NoFallEnabled = !NoFallEnabled;
+                ConfigManager.saveConfig(config);
 
             }
 

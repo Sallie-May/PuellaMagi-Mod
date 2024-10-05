@@ -48,12 +48,14 @@ public class ConfigManager {
     public static Config loadConfig() {
         File configFile = new File(CONFIG_FILE);
         if (!configFile.exists()) {
+            System.out.println("Config file not found. Creating a new one.");
             saveConfig(new Config());
         }
 
         try (FileReader reader = new FileReader(configFile)) {
             return GSON.fromJson(reader, Config.class);
         } catch (IOException e) {
+            System.err.println("Failed to load config: " + e.getMessage());
             e.printStackTrace();
             return new Config();
         }
@@ -62,7 +64,10 @@ public class ConfigManager {
     public static void saveConfig(Config config) {
         try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
             GSON.toJson(config, writer);
+            System.out.println("Config saved successfully.");
         } catch (IOException e) {
+            System.err.println("Failed to save config: " + e.getMessage());
             e.printStackTrace();
         }
-    }}
+    }
+}

@@ -1,6 +1,6 @@
 package com.salliemay.uwu.combat;
-
 import com.salliemay.uwu.SallieMod;
+import com.salliemay.uwu.friend.FriendManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -9,11 +9,12 @@ import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set; // Import Set
 
 public class Aimbot {
-
     private float originalYaw;
     private float originalPitch;
+    private final FriendManager friendManager = new FriendManager();
 
     public void alwaysLookAtClosestPlayer() {
         PlayerEntity player = Minecraft.getInstance().player;
@@ -27,11 +28,14 @@ public class Aimbot {
         List<PlayerEntity> closestPlayers = new ArrayList<>();
         double closestDistance = Double.MAX_VALUE;
 
+        // Convert the Set to a List
+        List<String> friends = new ArrayList<>(friendManager.getFriends());
+
         for (Entity entity : player.world.getEntitiesWithinAABB(Entity.class, boundingBox)) {
             if (entity instanceof PlayerEntity && entity != player) {
                 PlayerEntity otherPlayer = (PlayerEntity) entity;
 
-                if (otherPlayer.isAlive()) {
+                if (otherPlayer.isAlive() && !friends.contains(otherPlayer.getName().getString())) {
                     double distance = player.getDistance(otherPlayer);
 
                     if (distance < closestDistance) {
@@ -47,7 +51,6 @@ public class Aimbot {
 
         if (!closestPlayers.isEmpty()) {
             PlayerEntity closestPlayer = closestPlayers.get(0);
-
             faceEntity(player, closestPlayer);
         }
     }
@@ -66,5 +69,5 @@ public class Aimbot {
 
         player.rotationYaw = yaw;
         player.rotationPitch = pitch;
-
-    }}
+    }
+}
