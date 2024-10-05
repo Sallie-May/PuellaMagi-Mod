@@ -407,7 +407,7 @@ public class SallieMod {
                 helpMessage.append(TextFormatting.YELLOW + "- PRESS " + FakeCreativeKey.getKey() + " TO enable NoBadEffect\n");
 
                 helpMessage.append(TextFormatting.AQUA + "**BONUS Stuff :**\n");
-                helpMessage.append(TextFormatting.YELLOW + "**Automatically teleport if less than 500 HP!:**\n");
+                helpMessage.append(TextFormatting.YELLOW + "**Automatically teleport if less than" + healthlimit + "\n");
                 helpMessage.append(TextFormatting.YELLOW + "**On top left corner you can see your health\n");
 
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent(helpMessage.toString()), Minecraft.getInstance().player.getUniqueID());
@@ -523,15 +523,19 @@ public class SallieMod {
                         config.healthlimit = healthLimit;
                         ConfigManager.saveConfig(config);
 
-                        System.out.println("Health limit updated to: " + healthLimit);
+                        Minecraft.getInstance().player.sendMessage(new StringTextComponent("Health limit updated to: " + healthLimit),Minecraft.getInstance().player.getUniqueID());
                     } catch (NumberFormatException e) {
-                        System.out.println("Invalid health limit: " + parts[1]);
+                        Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid health limit: " + parts[1]),Minecraft.getInstance().player.getUniqueID());
                     } catch (ArrayIndexOutOfBoundsException e) {
-                        System.out.println("No health limit specified. Please provide a number.");
+                        Minecraft.getInstance().player.sendMessage(new StringTextComponent("No health limit specified. Please provide a number."), Minecraft.getInstance().player.getUniqueID());
                     }
                 } else {
-                    System.out.println("Usage: ?health <limit>");
+                    Minecraft.getInstance().player.sendMessage(new StringTextComponent("Actual limit : "+ healthlimit  + "Usage: ?health <limit> tp change"), Minecraft.getInstance().player.getUniqueID());
                 }
+
+                event.setCanceled(true);
+                return;
+
             }
 
             if (message.startsWith("?hclip")) {
