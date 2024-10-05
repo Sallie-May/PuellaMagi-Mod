@@ -54,7 +54,7 @@ public class ModuleOverlay {
         if (SallieMod.CMDSpammerEnabled) {
             activeModules.add("Command Spammer (Enabled)");
         }
-        if (SallieMod.Spin) {
+        if (SallieMod.spin) {
             activeModules.add("Spin (Enabled)");
         }
 
@@ -65,10 +65,10 @@ public class ModuleOverlay {
         if (SallieMod.randomTeleportEnabled) {
             activeModules.add("Random Teleport (Enabled)");
         }
-        if (SallieMod.NoBadEffectEnabled) {
+        if (SallieMod.noBadEffectEnabled) {
             activeModules.add("NoBadEffect (Enabled)");
         }
-        if (SallieMod.FlightEnabled) {
+        if (SallieMod.flightEnabled) {
             activeModules.add("Flight (Enabled)");
         }
 
@@ -82,21 +82,21 @@ public class ModuleOverlay {
         if (!SallieMod.suffixDisabled) {
             activeModules.add("Suffix (Enabled)");
         }
-        if (SallieMod.Velocity) {
+        if (SallieMod.velocity) {
             activeModules.add("Velocity (Enabled)");
         }
-        if (SallieMod.NukerEnabled) {
+        if (SallieMod.nukerEnabled) {
             activeModules.add("Nuker (Enabled)");
         }
 
         if (SallieMod.StashEnabled) {
             activeModules.add("StashFinder (Enabled)");
         }
-        if (SallieMod.FakeCreativeEnabled) {
+        if (SallieMod.fakeCreativeEnabled) {
             activeModules.add("Fake Creative (Enabled)");
         }
 
-        if (SallieMod.NoWeatherEnabled) {
+        if (SallieMod.noWeatherEnabled) {
             activeModules.add("NoWeather (Enabled)");
         }
 

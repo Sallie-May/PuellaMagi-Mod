@@ -6,7 +6,10 @@ import com.salliemay.uwu.movement.Fly;
 import com.salliemay.uwu.visual.*;
 import com.salliemay.uwu.world.Nuker;
 import com.salliemay.uwu.world.StashLogger;
+import com.salliemay.uwu.config.ConfigManager;
 
+import java.awt.Desktop;
+import java.net.URI;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -45,33 +48,24 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-
-
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
+
 import java.util.ArrayList;
 import java.util.List;
+
+
+
 @Mod(SallieMod.MOD_ID)
 public class SallieMod {
     public static final String MOD_ID = "salliemay";
     private static final Logger LOGGER = LogManager.getLogger();
     public static int healthTextColor = 0xFF64E0;
+
+    private static ConfigManager.Config config = ConfigManager.loadConfig();
+
 
     private static final KeyBinding teleportKey = new KeyBinding("VClip", GLFW.GLFW_KEY_K, "SallieConfig");
     private static final KeyBinding HClipKey = new KeyBinding("Hclip", GLFW.GLFW_KEY_J, "SallieConfig");
@@ -91,46 +85,50 @@ public class SallieMod {
     private static final KeyBinding FlightKey = new KeyBinding("Fly", GLFW.GLFW_RELEASE, "SallieConfig");
     private static String targetPlayerName = null;
 
-    public static boolean randomTeleportEnabled = false;
-    public static boolean killauraEnabled = false;
-    public static boolean autoTeleportEnabled = true;
-    public static boolean aimbotEnabled = false;
-    public static boolean NukerEnabled = false;
-    public static boolean Crasher = false;
-    public static boolean Spin = false;
-    public static boolean FakeCreativeEnabled = false;
-    public static boolean NoWeatherEnabled = true;
-    public static boolean NoBadEffectEnabled = true;
-    public static boolean Velocity = false;
-    public static boolean NoHurtCamEnabled = true;
-    public static int rotationMode = 1;
 
+    public static boolean randomTeleportEnabled = config.randomTeleportEnabled;
+    public static boolean killauraEnabled = config.killauraEnabled;
+    public static boolean autoTeleportEnabled = config.autoTeleportEnabled;
+    public static boolean aimbotEnabled = config.aimbotEnabled;
+    public static boolean nukerEnabled = config.nukerEnabled;
+    public static boolean crasher = config.crasher;
+    public static boolean spin = config.spin;
+    public static boolean fakeCreativeEnabled = config.fakeCreativeEnabled;
+    public static boolean noWeatherEnabled = config.noWeatherEnabled;
+    public static boolean noBadEffectEnabled = config.noBadEffectEnabled;
+    public static boolean velocity = config.velocity;
+    public static boolean NoHurtCamEnabled = config.noHurtCamEnabled;
+    public static int rotationMode = config.rotationMode;
+    public static int healthlimit = config.healthlimit;
     private static float currentYaw = 0;
     private static final float yawIncrement = 45;
 
 
-    private static boolean hasTeleported = false;
+    private static boolean hasTeleported = config.hasTeleported;
 
     public static RGBCam rgbModule;
 
-    private String suffix = " | FurRiot vous aimes ! :3 (à part les racistes, homophobes, transphobes etc..... :3)";
-    public static int commandDelay = 1;
+    private String suffix = config.suffix;
+    public static int commandDelay = config.commandDelay;
     public static int tickCounter = 0;
     public static String ToucheCMD = "";
 
-    public static boolean suffixDisabled = true;
-    public static double teleportHeight = 2.0;
-    public static double HclipFar = 2.0;
-    public static float FlySpeed = 3.0f;
-    public static double AuraRange = 15.0;
+    public static boolean suffixDisabled = config.suffixDisabled;
+    public static double teleportHeight = config.teleportHeight;
+    public static double HclipFar = config.hclipFar;
+    public static float FlySpeed = config.flySpeed;
+    public static double AuraRange = config.auraRange;
+    public static boolean StashEnabled = config.stashEnabled;
+    public static boolean RGBCamEnabled = config.rgbCamEnabled;
+    public static boolean CMDSpammerEnabled = config.cmdSpammerEnabled;
+    public static boolean particlesEnabled = config.particlesEnabled;
+    public static boolean flightEnabled = config.flightEnabled;
+    public static double aimbotRange = config.aimbotrange;
+
     private static final Aimbot aimbot = new Aimbot();
-    public static boolean StashEnabled = false;
-    public static boolean RGBCamEnabled = false;
-    public static boolean CMDSpammerEnabled = false;
-
-    public static boolean particlesEnabled = false;
-    public static boolean FlightEnabled = false;
-
+    private static final Aura entityAttacker = new Aura();
+    private static boolean showModules = config.showModules;
+    public static boolean NoBadEffect = config.noBadEffectEnabled;
 
 
     public SallieMod() {
@@ -144,12 +142,9 @@ public class SallieMod {
         MinecraftForge.EVENT_BUS.register(this);
         rgbModule = new RGBCam();
 
-
-
     }
 
 
-    public static double aimbotRange = 15.0;
 
     private void doClientStuff(FMLClientSetupEvent event) {
         try {
@@ -183,9 +178,6 @@ public class SallieMod {
         }
     }
 
-    private static final Aura entityAttacker = new Aura();
-
-    private static boolean showModules = true;
 
     @SubscribeEvent
     public void onBlocksRegistry(RegistryEvent.Register<?> blockRegistryEvent) {
@@ -255,6 +247,8 @@ public class SallieMod {
                     try {
                         double newRange = Double.parseDouble(parts[1]);
                         aimbotRange = newRange;
+                        ConfigManager.saveConfig(config);
+
                         Minecraft.getInstance().player.sendMessage(
                                 new StringTextComponent("Aimbot range set to " + aimbotRange),
                                 Minecraft.getInstance().player.getUniqueID()
@@ -277,6 +271,8 @@ public class SallieMod {
 
             if (message.equalsIgnoreCase("?autoteleport on")) {
                 autoTeleportEnabled = true;
+                ConfigManager.saveConfig(config);
+
                 Minecraft.getInstance().player.sendMessage(
                         new StringTextComponent("Auto teleport on low health enabled."),
                         Minecraft.getInstance().player.getUniqueID()
@@ -293,6 +289,8 @@ public class SallieMod {
                     try {
                         double newRange = Double.parseDouble(parts[1]);
                         AuraRange = newRange;
+                        ConfigManager.saveConfig(config);
+
                         Minecraft.getInstance().player.sendMessage(
                                 new StringTextComponent("Killaura range set to " + AuraRange),
                                 Minecraft.getInstance().player.getUniqueID()
@@ -316,6 +314,8 @@ public class SallieMod {
 
             if (message.equalsIgnoreCase("?autoteleport off")) {
                 autoTeleportEnabled = false;
+                ConfigManager.saveConfig(config);
+
                 Minecraft.getInstance().player.sendMessage(
                         new StringTextComponent("Auto teleport on low health disabled."),
                         Minecraft.getInstance().player.getUniqueID()
@@ -323,6 +323,40 @@ public class SallieMod {
                 event.setCanceled(true);
                 return;
             }
+
+            if (message.equalsIgnoreCase("?discord")) {
+                ConfigManager.saveConfig(config);
+
+                Minecraft.getInstance().player.sendMessage(
+                        new StringTextComponent("https://discord.gg/Dr9T8kA7uM to join !\n?discord open (to open the webpage directly)"),
+                        Minecraft.getInstance().player.getUniqueID()
+                );
+                event.setCanceled(true);
+                return;
+            }
+
+            if (message.equalsIgnoreCase("?discord open")) {
+                try {
+                    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                        Desktop.getDesktop().browse(new URI("https://discord.gg/Dr9T8kA7uM"));
+                    } else {
+                        Minecraft.getInstance().player.sendMessage(
+                                new StringTextComponent("Opening the browser is not supported on this platform."),
+                                Minecraft.getInstance().player.getUniqueID()
+                        );
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Minecraft.getInstance().player.sendMessage(
+                            new StringTextComponent("Failed to open the browser: " + e.getMessage()),
+                            Minecraft.getInstance().player.getUniqueID()
+                    );
+                }
+                event.setCanceled(true);
+                return;
+            }
+
+
 
             if (message.equalsIgnoreCase("?help")) {
                 StringBuilder helpMessage = new StringBuilder();
@@ -394,7 +428,9 @@ public class SallieMod {
 
 
             if (message.startsWith("?crash")) {
-                Crasher = !Crasher;
+                 crasher = !crasher;
+                ConfigManager.saveConfig(config);
+
                 Minecraft.getInstance().player.sendMessage(
                         new StringTextComponent("Crash enabled"),
                         Minecraft.getInstance().player.getUniqueID()
@@ -447,6 +483,8 @@ public class SallieMod {
 
             if (message.startsWith("?suffix ")) {
                 suffix = message.substring(8);
+                ConfigManager.saveConfig(config);
+
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent("Suffix changed to '" + suffix + "'"), Minecraft.getInstance().player.getUniqueID());
                 event.setCanceled(true);
                 return;
@@ -456,6 +494,8 @@ public class SallieMod {
                 try {
                     String heightString = message.split(" ")[1];
                     teleportHeight = Double.parseDouble(heightString);
+                    ConfigManager.saveConfig(config);
+
                     Minecraft.getInstance().player.sendMessage(new StringTextComponent("Teleport height set to '" + teleportHeight + "'"), Minecraft.getInstance().player.getUniqueID());
                 } catch (NumberFormatException e) {
                     Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid height. Please enter a valid number."), Minecraft.getInstance().player.getUniqueID());
@@ -465,10 +505,31 @@ public class SallieMod {
                 event.setCanceled(true);
                 return;
             }
+            if (message.startsWith("?health")) {
+                String[] parts = message.split(" ");
+                if (parts.length > 1) {
+                    try {
+                        int healthLimit = Integer.parseInt(parts[1]);
+                        config.healthlimit = healthLimit;
+                        ConfigManager.saveConfig(config);
+
+                        System.out.println("Health limit updated to: " + healthLimit);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid health limit: " + parts[1]);
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        System.out.println("No health limit specified. Please provide a number.");
+                    }
+                } else {
+                    System.out.println("Usage: ?health <limit>");
+                }
+            }
+
             if (message.startsWith("?hclip")) {
                 try {
                     String far = message.split(" ")[1];
                     HclipFar = Double.parseDouble(far);
+                    ConfigManager.saveConfig(config);
+
                     Minecraft.getInstance().player.sendMessage(new StringTextComponent("Hclip distance set to '" + HclipFar + "'"), Minecraft.getInstance().player.getUniqueID());
                 } catch (NumberFormatException e) {
                     Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid distance. Please enter a valid number."), Minecraft.getInstance().player.getUniqueID());
@@ -494,6 +555,8 @@ public class SallieMod {
                         }
 
                         commandDelay = Integer.parseInt(parts[2]);
+                        ConfigManager.saveConfig(config);
+
                         Minecraft.getInstance().player.sendMessage(new StringTextComponent("Command delay set to " + commandDelay + " ticks."), Minecraft.getInstance().player.getUniqueID());
 
                     } else if (subCommand.equalsIgnoreCase("command")) {
@@ -502,6 +565,8 @@ public class SallieMod {
                         }
 
                         ToucheCMD = message.substring(message.indexOf("command") + 8);
+                        ConfigManager.saveConfig(config);
+
                         Minecraft.getInstance().player.sendMessage(new StringTextComponent("Spamming command set to: " + ToucheCMD), Minecraft.getInstance().player.getUniqueID());
 
                     } else {
@@ -609,13 +674,16 @@ public class SallieMod {
             }
             if (message.startsWith("?suffixdisable")) {
                 suffixDisabled = true;
+                ConfigManager.saveConfig(config);
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent("Suffix disabled."), Minecraft.getInstance().player.getUniqueID());
                 event.setCanceled(true);
                 return;
             }
             if (message.startsWith("?noweather")) {
-                NoWeatherEnabled = !NoWeatherEnabled;
-                String status = NoWeatherEnabled ? "enabled" : "disabled";
+                noWeatherEnabled = !noWeatherEnabled;
+                ConfigManager.saveConfig(config);
+
+                String status = noWeatherEnabled ? "enabled" : "disabled";
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent("NoWeather " + status + "."), Minecraft.getInstance().player.getUniqueID());
                 event.setCanceled(true);
                 return;
@@ -660,7 +728,6 @@ public class SallieMod {
         }
     }
 
-    public static boolean NoBadEffect = true;
 
     @SubscribeEvent
     public void onRenderGameOverlay(RenderGameOverlayEvent event) {
@@ -808,7 +875,6 @@ public class SallieMod {
     }
     @Mod.EventBusSubscriber(modid = SallieMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
     public static class ClientEventHandler {
-        private static boolean hasTeleported = false;
 
         @SubscribeEvent
         public static void onClientTick(TickEvent.ClientTickEvent event) {
@@ -818,6 +884,9 @@ public class SallieMod {
                     if (player != null && player.connection != null) {
                         float health = player.getHealth();
                         MatrixStack matrixStack = new MatrixStack();
+
+                        handleHealthWarning(player, matrixStack, health);
+                        handleAutoTeleport(player, health);
 
                         if (isTeleporting && player != null) {
                             double distance = Math.sqrt(
@@ -855,17 +924,13 @@ public class SallieMod {
                             }
                         }
 
-                        if (FlightEnabled) {
+                        if (flightEnabled) {
+                            Fly.applyMovement();}
 
-                            
-                        Fly.applyMovement();}
 
                         if (targetPlayerName != null) {
                             followPlayer();
                         }
-
-                        handleHealthWarning(player, matrixStack, health);
-                        handleAutoTeleport(player, health);
 
                         if (randomTeleportEnabled) {
                             randomTeleport(player);
@@ -875,7 +940,7 @@ public class SallieMod {
                             entityAttacker.attackNearbyEntities();
                         }
 
-                        if (NukerEnabled) {
+                        if (nukerEnabled) {
                             Nuker.tick();
                         }
 
@@ -894,20 +959,20 @@ public class SallieMod {
                             aimbot.alwaysLookAtClosestPlayer();
                         }
 
-                        if (Velocity) {
+                        if (velocity) {
                             if (mc.player.hurtTime > 0) {
                                 mc.player.setMotion(0, 0, 0);
                             }
                         }
 
-                        if (Spin) {
+                        if (spin) {
                             handleSpinRotation(player);
                         }
-                        if (FakeCreativeEnabled) {
+                        if (fakeCreativeEnabled) {
                             MakeCreative(player);
                         }
 
-                        if (NoWeatherEnabled) {
+                        if (noWeatherEnabled) {
                             if (Minecraft.getInstance().world != null) {
                                 Minecraft.getInstance().world.setThunderStrength(0);
                                 Minecraft.getInstance().world.setRainStrength(0);
@@ -929,11 +994,14 @@ public class SallieMod {
             if (AimbotKey.isPressed()) {
                 aimbotEnabled = !aimbotEnabled;
                 player.sendMessage(new StringTextComponent(aimbotEnabled ? "Aimbot enabled." : "Aimbot disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+
             }
             if (FakeCreativeKey.isPressed()) {
-                FakeCreativeEnabled = !FakeCreativeEnabled;
+                fakeCreativeEnabled = !fakeCreativeEnabled;
+                ConfigManager.saveConfig(config);
 
-                if (!FakeCreativeEnabled) {
+                if (!fakeCreativeEnabled) {
                     MakeSurvival(player);
                     player.sendMessage(new StringTextComponent("Fake Creative disabled."), player.getUniqueID());
                 } else {
@@ -943,64 +1011,85 @@ public class SallieMod {
 
 
             if (NukerKey.isPressed()) {
-                NukerEnabled = !NukerEnabled;
-                player.sendMessage(new StringTextComponent(NukerEnabled ? "Nuker enabled." : "Nuker disabled."), player.getUniqueID());
+                nukerEnabled = !nukerEnabled;
+                player.sendMessage(new StringTextComponent(nukerEnabled ? "Nuker enabled." : "Nuker disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+
             }
 
             if (SpinKey.isPressed()) {
-                Spin = !Spin;
-                player.sendMessage(new StringTextComponent(Spin ? "Spin enabled." : "Spin disabled."), player.getUniqueID());
+                spin = !spin;
+                player.sendMessage(new StringTextComponent(spin ? "Spin enabled." : "Spin disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+
             }
 
             if (FlightKey.isPressed()) {
-                FlightEnabled = !FlightEnabled;
-                player.sendMessage(new StringTextComponent(FlightEnabled ? "Flight enabled." : "Flight disabled."), player.getUniqueID());
+                flightEnabled = !flightEnabled;
+                player.sendMessage(new StringTextComponent(flightEnabled ? "Flight enabled." : "Flight disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+
             }
 
             if (CMDSpammer.isPressed()) {
                 CMDSpammerEnabled = !CMDSpammerEnabled;
                 player.sendMessage(new StringTextComponent(CMDSpammerEnabled ? "CMDSpammer enabled" : "CMDSpammer disabled"), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+
             }
 
             if (KillAura.isPressed()) {
                 killauraEnabled = !killauraEnabled;
                 player.sendMessage(new StringTextComponent(killauraEnabled ? "Killaura enabled." : "Killaura disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+
             }
 
             if (teleportKey.isPressed()) {
                 double newY = player.getPosY() + SallieMod.teleportHeight;
                 player.setPosition(player.getPosX(), newY, player.getPosZ());
+                ConfigManager.saveConfig(config);
+
             }
 
             if (toggleParticlesKey.isPressed()) {
                 particlesEnabled = !particlesEnabled;
                 player.sendMessage(new StringTextComponent(particlesEnabled ? "Item Laser enabled." : "Item Laser disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+
             }
 
             if (HClipKey.isPressed()) {
-                float yaw = player.rotationYaw;
+                float yaw = mc.player.rotationYaw;
                 double radians = Math.toRadians(yaw);
                 double forwardX = -Math.sin(radians);
                 double forwardZ = Math.cos(radians);
-                double newX = player.getPosX() + forwardX * SallieMod.HclipFar;
-                double newZ = player.getPosZ() + forwardZ * SallieMod.HclipFar;
-                player.connection.sendPacket(new CPlayerPacket.PositionPacket(newX, player.getPosY(), newZ, true));
-                player.setPosition(newX, player.getPosY(), newZ);
+                double newX = mc.player.getPosX() + forwardX * SallieMod.HclipFar;
+                double newZ = mc.player.getPosZ() + forwardZ * SallieMod.HclipFar;
+                double newY = mc.player.getPosY();
+                CPlayerPacket.PositionPacket positionPacket = new CPlayerPacket.PositionPacket(newX, newY, newZ, true);
+                mc.player.connection.sendPacket(positionPacket);
+                mc.player.setPosition(newX, newY, newZ);
             }
-
 
             if (teleportToggleKey.isPressed()) {
                 randomTeleportEnabled = !randomTeleportEnabled;
                 player.sendMessage(new StringTextComponent(randomTeleportEnabled ? "RandomTeleport enabled." : "RandomTeleport disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+
             }
 
             if (NoHurtCamKey.isPressed()) {
                 NoHurtCamEnabled = !NoHurtCamEnabled;
                 player.sendMessage(new StringTextComponent(NoHurtCamEnabled ? "NoHurtCam enabled." : "NoHurtCam disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+
             }
             if (StashKey.isPressed()) {
                 StashEnabled = !StashEnabled;
                 player.sendMessage(new StringTextComponent(StashEnabled ? "Stash enabled." : "Stash disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+
             }
         }}
 
@@ -1020,7 +1109,7 @@ public class SallieMod {
     }
 
     private static void handleHealthWarning(ClientPlayerEntity player, MatrixStack matrixStack, float health) {
-        if (health < 500) {
+        if (health < config.healthlimit) {
             String alertMessage = "ALERT YOU CAN GET ONE-SHOT";
             int alertColor = 0x8B0000;
             int x = 20;
@@ -1033,11 +1122,13 @@ public class SallieMod {
     private static void handleAutoTeleport(ClientPlayerEntity player, float health) {
         ResourceLocation dimension = player.world.getDimensionKey().getLocation();
         if (autoTeleportEnabled && dimension.equals(World.OVERWORLD.getLocation())) {
-            if (health < 500 && !hasTeleported) {
-                LOGGER.info("Player health is below 500 in the Overworld. Executing command: /team home");
+            if (health < healthlimit && !hasTeleported) {
                 player.sendChatMessage("/team home");
                 hasTeleported = true;
-            } else if (health >= 500) {
+                ConfigManager.saveConfig(config);
+
+
+            } else if (health >= healthlimit) {
                 hasTeleported = false;
             }
         }
