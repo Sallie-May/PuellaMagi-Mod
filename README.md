@@ -55,6 +55,7 @@
 - **Press** `[Velocity]` to enable Velocity
 - **Press** `[NoBadEffect]` to disable/enable NoBadEffect
 - **Press** `[NoHurtCam]` to disable/enable NoHurtCam
+- **Press** `[NoFall]` to disable/enable NoFall
 
 ## Bonus Features
 - **Auto Teleport:** Automatically teleport if health drops below 500 HP.
