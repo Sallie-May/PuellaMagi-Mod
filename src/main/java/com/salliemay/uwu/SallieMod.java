@@ -397,7 +397,14 @@ public class SallieMod {
                 helpMessage.append(TextFormatting.YELLOW + "- PRESS " + toggleParticlesKey.getKey() + " TO Laser ESP\n");
                 helpMessage.append(TextFormatting.YELLOW + "- PRESS " + AimbotKey.getKey() + " TO enable Aimbot\n");
                 helpMessage.append(TextFormatting.YELLOW + "- PRESS " + CMDSpammer.getKey() + " TO enable CMD Spammer\n");
-                helpMessage.append(TextFormatting.YELLOW + "- PRESS " + SpinKey.getKey() + " TO enable Spin\n");
+                helpMessage.append(TextFormatting.YELLOW + "- PRESS " + FlightKey.getKey() + " TO enable Fly\n");
+                helpMessage.append(TextFormatting.YELLOW + "- PRESS " + NoFall.getKey() + " TO enable NoFall\n");
+                helpMessage.append(TextFormatting.YELLOW + "- PRESS " + VelocityKey.getKey() + " TO enable Velocity\n");
+                helpMessage.append(TextFormatting.YELLOW + "- PRESS " + RGBCameraKeys.getKey() + " TO enable RGBCamera\n");
+                helpMessage.append(TextFormatting.YELLOW + "- PRESS " + CMDSpammer.getKey() + " TO enable Spin\n");
+                helpMessage.append(TextFormatting.YELLOW + "- PRESS " + NoHurtCamKey.getKey() + " TO enable NoHurtCam\n");
+                helpMessage.append(TextFormatting.YELLOW + "- PRESS " + NoBadEffectKey.getKey() + " TO enable NoBadEffect\n");
+                helpMessage.append(TextFormatting.YELLOW + "- PRESS " + FakeCreativeKey.getKey() + " TO enable NoBadEffect\n");
 
                 helpMessage.append(TextFormatting.AQUA + "**BONUS Stuff :**\n");
                 helpMessage.append(TextFormatting.YELLOW + "**Automatically teleport if less than 500 HP!:**\n");
