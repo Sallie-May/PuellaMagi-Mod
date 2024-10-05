@@ -39,7 +39,8 @@
 ### Utility Commands
 - `?cmdspammer delay <ticks>`: Set the delay (in ticks) between spamming commands.
 - `?cmdspammer command <command>`: Define the command to be spammed.
-
+- `?discord`: To get the discord URL
+  
 ### Key Commands
 - **Press** `[Teleport Key]` to VClip (use `?vclip` to modify).
 - **Press** `[Fly Key]` to fly (use `?fly <speed>` to modify).
