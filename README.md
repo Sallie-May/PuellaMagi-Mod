@@ -4,10 +4,10 @@
 
 ## Features
 - **Combat Enhancements:** Modify aimbot range with ease.
-- **Movement Utilities:** Adjust vertical and horizontal clipping (VClip/HClip), teleport to coordinates, and more.
+- **Movement Utilities:** Adjust vertical and horizontal clipping (VClip/HClip), teleport to coordinates, fly, and more.
 - **Visual Commands:** Customize health text color, enable/disable message suffixes, and apply gradient effects.
 - **Utility Commands:** Command spamming tools for advanced users.
-- **Keybindings:** Quick access to various actions such as VClip, HClip, teleportation, and aimbot.
+- **Keybindings:** Quick access to various actions such as VClip, HClip, teleportation, aimbot.....
 
 ## Installation
 1. Download the latest release from the [releases page](https://github.com/Sallie-May/PuellaMagi-Mod/releases).
@@ -42,6 +42,7 @@
 
 ### Key Commands
 - **Press** `[Teleport Key]` to VClip (use `?vclip` to modify).
+- **Press** `[Fly Key]` to fly (use `?fly <speed>` to modify).
 - **Press** `[HClip Key]` to HClip (use `?hclip` to modify).
 - **Press** `[Teleport Toggle Key]` to random teleport.
 - **Press** `[Particles Key]` to enable Laser ESP.
@@ -50,6 +51,9 @@
 - **Press** `[CMD Spammer Key]` to enable the CMD Spammer.
 - **Press** `[Spin]` to enable the Spin.
 - **Press** `[Fake Creative]` to enable the Fake Creative.
+- **Press** `[Velocity]` to enable Velocity
+- **Press** `[NoBadEffect]` to disable/enable NoBadEffect
+- **Press** `[NoHurtCam]` to disable/enable NoHurtCam
 
 ## Bonus Features
 - **Auto Teleport:** Automatically teleport if health drops below 500 HP.
