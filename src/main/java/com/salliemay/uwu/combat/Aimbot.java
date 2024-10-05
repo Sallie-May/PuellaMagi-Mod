@@ -1,15 +1,15 @@
 package com.salliemay.uwu.combat;
+
 import com.salliemay.uwu.SallieMod;
-import com.salliemay.uwu.friend.FriendManager;
+import com.salliemay.uwu.config.FriendManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set; // Import Set
+import java.util.HashSet;
+import java.util.Set;
 
 public class Aimbot {
     private float originalYaw;
@@ -25,11 +25,10 @@ public class Aimbot {
 
         double radius = SallieMod.aimbotRange;
         AxisAlignedBB boundingBox = new AxisAlignedBB(player.getPosition()).grow(radius);
-        List<PlayerEntity> closestPlayers = new ArrayList<>();
+        Set<PlayerEntity> closestPlayers = new HashSet<>();
         double closestDistance = Double.MAX_VALUE;
 
-        // Convert the Set to a List
-        List<String> friends = new ArrayList<>(friendManager.getFriends());
+        Set<String> friends = friendManager.getFriends();
 
         for (Entity entity : player.world.getEntitiesWithinAABB(Entity.class, boundingBox)) {
             if (entity instanceof PlayerEntity && entity != player) {
@@ -50,7 +49,7 @@ public class Aimbot {
         }
 
         if (!closestPlayers.isEmpty()) {
-            PlayerEntity closestPlayer = closestPlayers.get(0);
+            PlayerEntity closestPlayer = closestPlayers.iterator().next();
             faceEntity(player, closestPlayer);
         }
     }

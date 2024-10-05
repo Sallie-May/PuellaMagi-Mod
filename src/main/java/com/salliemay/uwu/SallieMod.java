@@ -82,7 +82,7 @@ public class SallieMod {
     private static final KeyBinding NoFall = new KeyBinding("NoFall", GLFW.GLFW_RELEASE, "SallieConfig");
     private static String targetPlayerName = null;
 
-    private final com.salliemay.uwu.friend.FriendManager friendManager = new com.salliemay.uwu.friend.FriendManager();
+    private final com.salliemay.uwu.config.FriendManager friendManager = new com.salliemay.uwu.config.FriendManager();
 
     public static boolean randomTeleportEnabled = config.randomTeleportEnabled;
     public static boolean NoFallEnabled = config.NoFall;
@@ -238,7 +238,7 @@ public class SallieMod {
                             Minecraft.getInstance().player.getUniqueID()
                     );
                 }
-                return;
+                event.setCanceled(true);
             }
             if (message.startsWith("?aimbot ")) {
                 String[] parts = message.split(" ");
@@ -264,7 +264,7 @@ public class SallieMod {
                             Minecraft.getInstance().player.getUniqueID()
                     );
                 }
-                return;
+                event.setCanceled(true);
             }
 
             if (message.equalsIgnoreCase("?autoteleport on")) {
@@ -275,7 +275,7 @@ public class SallieMod {
                         new StringTextComponent("Auto teleport on low health enabled."),
                         Minecraft.getInstance().player.getUniqueID()
                 );
-                return;
+                event.setCanceled(true);
             }
 
 
@@ -303,7 +303,7 @@ public class SallieMod {
                             Minecraft.getInstance().player.getUniqueID()
                     );
                 }
-                return;
+                event.setCanceled(true);
             }
 
 
@@ -315,7 +315,7 @@ public class SallieMod {
                         new StringTextComponent("Auto teleport on low health disabled."),
                         Minecraft.getInstance().player.getUniqueID()
                 );
-                return;
+                event.setCanceled(true);
             }
 
             if (message.equalsIgnoreCase("?discord")) {
@@ -325,7 +325,7 @@ public class SallieMod {
                         new StringTextComponent("https://discord.gg/Dr9T8kA7uM to join !\n?discord open (to open the webpage directly)"),
                         Minecraft.getInstance().player.getUniqueID()
                 );
-                return;
+                event.setCanceled(true);
             }
 
             if (message.equalsIgnoreCase("?discord open")) {
@@ -345,7 +345,7 @@ public class SallieMod {
                             Minecraft.getInstance().player.getUniqueID()
                     );
                 }
-                return;
+                event.setCanceled(true);
             }
 
 
@@ -403,7 +403,7 @@ public class SallieMod {
                 helpMessage.append(TextFormatting.YELLOW + "**On top left corner you can see your health\n");
 
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent(helpMessage.toString()), Minecraft.getInstance().player.getUniqueID());
-                return;
+                event.setCanceled(true);
             }
 
             if (message.equalsIgnoreCase("?follow stop")) {
@@ -412,7 +412,7 @@ public class SallieMod {
                         new StringTextComponent("Stopped following."),
                         Minecraft.getInstance().player.getUniqueID()
                 );
-                return;
+                event.setCanceled(true);
             }
 
             if (message.startsWith("?follow ")) {
@@ -422,7 +422,7 @@ public class SallieMod {
                         new StringTextComponent("Now following " + playerName),
                         Minecraft.getInstance().player.getUniqueID()
                 );
-                return;
+                event.setCanceled(true);
             }
 
 
@@ -434,7 +434,7 @@ public class SallieMod {
                         new StringTextComponent("Crash enabled"),
                         Minecraft.getInstance().player.getUniqueID()
                 );
-                return;
+                event.setCanceled(true);
             }
 
             if (message.startsWith("?goto ")) {
@@ -475,18 +475,18 @@ public class SallieMod {
                             Minecraft.getInstance().player.getUniqueID()
                     );
                 }
-                return;
+                event.setCanceled(true);
             }
             if (message.startsWith("?friend add ")) {
                 String friendName = message.substring(12).trim();
                 friendManager.addFriend(friendName);
-                return;
+                event.setCanceled(true);
             }
 
             if (message.startsWith("?friend remove ")) {
                 String friendName = message.substring(15).trim();
                 friendManager.removeFriend(friendName);
-                return;
+                event.setCanceled(true);
             }
 
             if (message.equalsIgnoreCase("?friends")) {
@@ -502,7 +502,7 @@ public class SallieMod {
                 }
 
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent(friendList.toString()), Minecraft.getInstance().player.getUniqueID());
-                return;
+                event.setCanceled(true);
             }
 
             if (message.startsWith("?suffix ")) {
@@ -510,7 +510,7 @@ public class SallieMod {
                 ConfigManager.saveConfig(config);
 
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent("Suffix changed to '" + suffix + "'"), Minecraft.getInstance().player.getUniqueID());
-                return;
+                event.setCanceled(true);
             }
 
             if (message.startsWith("?vclip")) {
@@ -525,7 +525,7 @@ public class SallieMod {
                 } catch (ArrayIndexOutOfBoundsException e) {
                     Minecraft.getInstance().player.sendMessage(new StringTextComponent("Please specify a height."), Minecraft.getInstance().player.getUniqueID());
                 }
-                return;
+                event.setCanceled(true);
             }
             if (message.startsWith("?health")) {
                 String[] parts = message.split(" ");
@@ -545,7 +545,7 @@ public class SallieMod {
                     Minecraft.getInstance().player.sendMessage(new StringTextComponent("Actual limit : " + healthlimit + "Usage: ?health <limit> tp change"), Minecraft.getInstance().player.getUniqueID());
                 }
 
-                return;
+                event.setCanceled(true);
 
             }
 
@@ -561,7 +561,7 @@ public class SallieMod {
                 } catch (ArrayIndexOutOfBoundsException e) {
                     Minecraft.getInstance().player.sendMessage(new StringTextComponent("Please specify a distance."), Minecraft.getInstance().player.getUniqueID());
                 }
-                return;
+                event.setCanceled(true);
             }
             if (message.startsWith("?cmdspammer")) {
                 try {
@@ -605,7 +605,7 @@ public class SallieMod {
                     Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid command format."), Minecraft.getInstance().player.getUniqueID());
                 }
 
-                return;
+                event.setCanceled(true);
             }
             if (message.startsWith("?tp ")) {
                 String[] parts = message.split(" ");
@@ -633,7 +633,7 @@ public class SallieMod {
                         );
                     }
                 }
-                return;
+                event.setCanceled(true);
             }
             if (message.equalsIgnoreCase("?gradientlist")) {
                 String gradientList = ModuleOverlay.getGradientList();
@@ -643,7 +643,7 @@ public class SallieMod {
 
                 );
 
-                return;
+                event.setCanceled(true);
 
             }
 
@@ -668,7 +668,7 @@ public class SallieMod {
                                 Minecraft.getInstance().player.getUniqueID()
                         );
                     }
-                    return;
+                    event.setCanceled(true);
                 }
             }
 
@@ -689,14 +689,14 @@ public class SallieMod {
                         Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid input. Please enter 1 for packet-based or 2 for head-based rotation."), Minecraft.getInstance().player.getUniqueID());
                     }
 
-                    return;
+                    event.setCanceled(true);
                 }
             }
             if (message.startsWith("?suffixdisable")) {
                 suffixDisabled = true;
                 ConfigManager.saveConfig(config);
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent("Suffix disabled."), Minecraft.getInstance().player.getUniqueID());
-                return;
+                event.setCanceled(true);
             }
             if (message.startsWith("?noweather")) {
                 noWeatherEnabled = !noWeatherEnabled;
@@ -704,7 +704,7 @@ public class SallieMod {
 
                 String status = noWeatherEnabled ? "enabled" : "disabled";
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent("NoWeather " + status + "."), Minecraft.getInstance().player.getUniqueID());
-                return;
+                event.setCanceled(true);
             }
 
             if (message.toLowerCase().startsWith("?fly ")) {
@@ -725,13 +725,15 @@ public class SallieMod {
                 } catch (NumberFormatException e) {
                     Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid Fly Speed. Please enter a valid number."), Minecraft.getInstance().player.getUniqueID());
                 }
+                event.setCanceled(true);
+
             }
 
 
             if (message.startsWith("?suffixenable")) {
                 suffixDisabled = false;
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent("Suffix enabled."), Minecraft.getInstance().player.getUniqueID());
-                return;
+                event.setCanceled(true);
             }
 
             if (!suffixDisabled && !message.startsWith("#") && !message.startsWith(".") && !message.startsWith("/")) {

@@ -9,7 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class ConfigManager {
-    private static final String CONFIG_FILE = "config.owo";
+    private static final String CONFIG_FILE = "config.json";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public static class Config {
@@ -56,7 +56,6 @@ public class ConfigManager {
             return GSON.fromJson(reader, Config.class);
         } catch (IOException e) {
             System.err.println("Failed to load config: " + e.getMessage());
-            e.printStackTrace();
             return new Config();
         }
     }
@@ -67,7 +66,6 @@ public class ConfigManager {
             System.out.println("Config saved successfully.");
         } catch (IOException e) {
             System.err.println("Failed to save config: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }

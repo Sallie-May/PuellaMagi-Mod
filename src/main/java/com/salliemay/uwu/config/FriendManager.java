@@ -1,4 +1,4 @@
-package com.salliemay.uwu.friend;
+package com.salliemay.uwu.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,9 +22,12 @@ public class FriendManager {
     }
 
     public void addFriend(String username) {
-        friends.add(username);
-        saveFriends();
-        Minecraft.getInstance().player.sendMessage(new StringTextComponent(username + " has been added as a friend."), Minecraft.getInstance().player.getUniqueID());
+        if (friends.add(username)) {
+            saveFriends();
+            Minecraft.getInstance().player.sendMessage(new StringTextComponent(username + " has been added as a friend."), Minecraft.getInstance().player.getUniqueID());
+        } else {
+            Minecraft.getInstance().player.sendMessage(new StringTextComponent(username + " is already in your friends list."), Minecraft.getInstance().player.getUniqueID());
+        }
     }
 
     public void removeFriend(String username) {
@@ -37,6 +40,7 @@ public class FriendManager {
     }
 
     public Set<String> getFriends() {
+        loadFriends();
         return friends;
     }
 
@@ -46,6 +50,7 @@ public class FriendManager {
             try (FileReader reader = new FileReader(file)) {
                 String[] loadedFriends = GSON.fromJson(reader, String[].class);
                 if (loadedFriends != null) {
+                    friends.clear();
                     for (String friend : loadedFriends) {
                         friends.add(friend);
                     }
