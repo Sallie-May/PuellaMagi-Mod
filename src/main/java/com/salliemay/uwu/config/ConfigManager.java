@@ -40,6 +40,7 @@ public class ConfigManager {
         public boolean NoFall = true;
         public boolean AutoSprintEnabled = true;
         public boolean NoFogEnabled = true;
+        public boolean Jesus = false;
         public int rotationMode = 1;
         public double aimbotrange = 15;
         public int healthlimit = 1000;

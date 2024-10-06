@@ -12,11 +12,11 @@ import java.util.Random;
 public class Nuker {
     private static final Queue<BlockPos> blocksToBreak = new LinkedList<>();
     private static boolean isBreaking = false;
-    private static final int MAX_RANGE = 7;  // Max range of block breaking
-    private static final int DEFAULT_RANGE = 4; // Default range value
-    private static int range = DEFAULT_RANGE;  // Adjustable range
-    private static final long BREAK_DELAY = 100; // Delay between breaks in milliseconds
-    private static long lastBreakTime = 0; // Tracks the time of the last break
+    private static final int MAX_RANGE = 7;
+    private static final int DEFAULT_RANGE = 4;
+    private static int range = DEFAULT_RANGE;
+    private static final long BREAK_DELAY = 100;
+    private static long lastBreakTime = 0;
 
     private static final Random random = new Random();
 

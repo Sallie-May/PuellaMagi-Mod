@@ -3,6 +3,7 @@ import com.salliemay.uwu.combat.Aura;
 import com.salliemay.uwu.combat.Aimbot;
 import com.salliemay.uwu.movement.Fly;
 import com.salliemay.uwu.movement.AutoSprint;
+import com.salliemay.uwu.movement.Jesus;
 import com.salliemay.uwu.visual.*;
 import com.salliemay.uwu.world.Nuker;
 import com.salliemay.uwu.world.StashLogger;
@@ -11,6 +12,8 @@ import com.salliemay.uwu.config.ConfigManager;
 import java.awt.Desktop;
 import java.net.URI;
 
+import net.minecraft.block.Blocks;
+import net.minecraft.block.KelpBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -18,6 +21,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -62,6 +66,7 @@ public class SallieMod {
     public static int healthTextColor = 0xFF64E0;
 
     private static final ConfigManager.Config config = ConfigManager.loadConfig();
+    private static Jesus jesus = new Jesus();
 
 
     private static final KeyBinding teleportKey = new KeyBinding("VClip", GLFW.GLFW_KEY_K, "SallieConfig");
@@ -83,6 +88,7 @@ public class SallieMod {
     private static final KeyBinding NoFall = new KeyBinding("NoFall", GLFW.GLFW_RELEASE, "SallieConfig");
     private static final KeyBinding AutoSprintKey = new KeyBinding("AutoSprint", GLFW.GLFW_RELEASE, "SallieConfig");
     private static final KeyBinding NoFogKey = new KeyBinding("NoFog", GLFW.GLFW_RELEASE, "SallieConfig");
+    private static final KeyBinding JesusKey = new KeyBinding("Jesus", GLFW.GLFW_RELEASE, "SallieConfig");
     private static String targetPlayerName = null;
 
     private final com.salliemay.uwu.config.FriendManager friendManager = new com.salliemay.uwu.config.FriendManager();
@@ -99,6 +105,7 @@ public class SallieMod {
     public static boolean noWeatherEnabled = config.noWeatherEnabled;
     public static boolean noBadEffectEnabled = config.noBadEffectEnabled;
     public static boolean velocity = config.velocity;
+    public static boolean JesusEnabled = config.Jesus;
     public static boolean NoHurtCamEnabled = config.noHurtCamEnabled;
     public static int rotationMode = config.rotationMode;
     public static int healthlimit = config.healthlimit;
@@ -167,6 +174,7 @@ public class SallieMod {
             ClientRegistry.registerKeyBinding(NoHurtCamKey);
             ClientRegistry.registerKeyBinding(FlightKey);
             ClientRegistry.registerKeyBinding(NoFall);
+            ClientRegistry.registerKeyBinding(JesusKey);
 
         } catch (Exception e) {
             LOGGER.error("Error during client setup: ", e);
@@ -408,6 +416,7 @@ public class SallieMod {
                 helpMessage.append(TextFormatting.YELLOW + "- PRESS " + NoHurtCamKey.getKey() + " TO enable NoHurtCam\n");
                 helpMessage.append(TextFormatting.YELLOW + "- PRESS " + NoBadEffectKey.getKey() + " TO enable NoBadEffect\n");
                 helpMessage.append(TextFormatting.YELLOW + "- PRESS " + FakeCreativeKey.getKey() + " TO enable NoBadEffect\n");
+                helpMessage.append(TextFormatting.YELLOW + "- PRESS " + JesusKey.getKey() + " TO enable Jesus\n");
 
                 helpMessage.append(TextFormatting.AQUA + "**BONUS Stuff :**\n");
                 helpMessage.append(TextFormatting.YELLOW + "**Automatically teleport if less than" + healthlimit + "\n");
@@ -977,6 +986,10 @@ public class SallieMod {
                             Fly.applyMovement();
                         }
 
+                        if (JesusEnabled) {
+                            jesus.checkWaterMovement();
+                        }
+
 
                         if (targetPlayerName != null) {
                             followPlayer();
@@ -1096,6 +1109,14 @@ public class SallieMod {
                 spin = !spin;
                 config.spin = spin;
                 player.sendMessage(new StringTextComponent(spin ? "Spin enabled." : "Spin disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+
+            }
+
+            if (JesusKey.isPressed()) {
+                JesusEnabled = !JesusEnabled;
+                config.Jesus = JesusEnabled;
+                player.sendMessage(new StringTextComponent(JesusEnabled ? "Jesus enabled." : "Jesus disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
 
             }
