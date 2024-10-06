@@ -71,6 +71,9 @@ public class ModuleOverlay {
         if (SallieMod.flightEnabled) {
             activeModules.add("Flight (Enabled)");
         }
+        if (SallieMod.AutoSprintEnabled) {
+            activeModules.add("Auto Sprint (Enabled)");
+        }
 
         if (SallieMod.aimbotEnabled) {
             activeModules.add("Aimbot Enabled (Range : "+SallieMod.aimbotRange+" )");

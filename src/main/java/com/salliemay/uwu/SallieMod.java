@@ -2,6 +2,7 @@ package com.salliemay.uwu;
 import com.salliemay.uwu.combat.Aura;
 import com.salliemay.uwu.combat.Aimbot;
 import com.salliemay.uwu.movement.Fly;
+import com.salliemay.uwu.movement.AutoSprint;
 import com.salliemay.uwu.visual.*;
 import com.salliemay.uwu.world.Nuker;
 import com.salliemay.uwu.world.StashLogger;
@@ -80,6 +81,8 @@ public class SallieMod {
     private static final KeyBinding NoHurtCamKey = new KeyBinding("NoHurtCam", GLFW.GLFW_RELEASE, "SallieConfig");
     private static final KeyBinding FlightKey = new KeyBinding("Fly", GLFW.GLFW_RELEASE, "SallieConfig");
     private static final KeyBinding NoFall = new KeyBinding("NoFall", GLFW.GLFW_RELEASE, "SallieConfig");
+    private static final KeyBinding AutoSprintKey = new KeyBinding("AutoSprint", GLFW.GLFW_RELEASE, "SallieConfig");
+    private static final KeyBinding NoFogKey = new KeyBinding("NoFog", GLFW.GLFW_RELEASE, "SallieConfig");
     private static String targetPlayerName = null;
 
     private final com.salliemay.uwu.config.FriendManager friendManager = new com.salliemay.uwu.config.FriendManager();
@@ -99,6 +102,7 @@ public class SallieMod {
     public static boolean NoHurtCamEnabled = config.noHurtCamEnabled;
     public static int rotationMode = config.rotationMode;
     public static int healthlimit = config.healthlimit;
+    public static boolean AutoSprintEnabled = config.AutoSprintEnabled;
     private static float currentYaw = 0;
     private static final float yawIncrement = 45;
 
@@ -123,6 +127,7 @@ public class SallieMod {
     public static boolean particlesEnabled = config.particlesEnabled;
     public static boolean flightEnabled = config.flightEnabled;
     public static double aimbotRange = config.aimbotrange;
+    public static boolean NoFogEnabled = config.NoFogEnabled;
 
     private static final Aimbot aimbot = new Aimbot();
     private static final Aura entityAttacker = new Aura();
@@ -136,7 +141,6 @@ public class SallieMod {
         MinecraftForge.EVENT_BUS.register(Fly.class);
         MinecraftForge.EVENT_BUS.register(Aura.class);
         MinecraftForge.EVENT_BUS.register(Aimbot.class);
-        MinecraftForge.EVENT_BUS.register(NoFog.class);
         MinecraftForge.EVENT_BUS.register(new StashLogger());
         MinecraftForge.EVENT_BUS.register(this);
         rgbModule = new RGBCam();
@@ -990,6 +994,7 @@ public class SallieMod {
                             Nuker.tick();
                         }
 
+
                         if (CMDSpammerEnabled) {
                             String command = ToucheCMD.replaceAll("/", "");
 
@@ -1002,10 +1007,14 @@ public class SallieMod {
                         if (aimbotEnabled) {
                             aimbot.alwaysLookAtClosestPlayer();
                         }
-
+                        if (AutoSprintEnabled) {
+                            AutoSprint.tick();
+                        }
                         if (player.hurtTime > 0 && velocity) {
                             player.hurtTime = 0;
                             player.setMotion(0, player.getMotion().y, 0);
+
+
                         }
 
                         if (spin) {
@@ -1013,6 +1022,10 @@ public class SallieMod {
                         }
                         if (fakeCreativeEnabled) {
                             MakeCreative(player);
+                        }
+
+                        if (NoFogEnabled) {
+                            NoFog.disableFog();
                         }
                         if (NoFallEnabled) {
                             NoFalling();
@@ -1061,6 +1074,15 @@ public class SallieMod {
             }
 
 
+            if (NoFogKey.isPressed()) {
+                NoFogEnabled = !NoFogEnabled;
+                config.NoFogEnabled = NoFogEnabled;
+
+                player.sendMessage(new StringTextComponent(NoFogEnabled ? "NoFog enabled." : "Nuker disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+
+            }
+
             if (NukerKey.isPressed()) {
                 nukerEnabled = !nukerEnabled;
                 config.nukerEnabled = nukerEnabled;
@@ -1083,6 +1105,14 @@ public class SallieMod {
                 config.velocity = velocity;
 
                 player.sendMessage(new StringTextComponent(velocity ? "Velocity enabled." : "Velocity disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+
+            }
+
+            if (AutoSprintKey.isPressed()) {
+                AutoSprintEnabled = !AutoSprintEnabled;
+                config.AutoSprintEnabled = AutoSprintEnabled;
+                player.sendMessage(new StringTextComponent(velocity ? "AutoSprint enabled." : "AutoSprint disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
 
             }

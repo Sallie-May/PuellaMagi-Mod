@@ -38,6 +38,8 @@ public class ConfigManager {
         public boolean suffixDisabled = true;
         public boolean showModules = true;
         public boolean NoFall = true;
+        public boolean AutoSprintEnabled = true;
+        public boolean NoFogEnabled = true;
         public int rotationMode = 1;
         public double aimbotrange = 15;
         public int healthlimit = 1000;
