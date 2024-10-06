@@ -246,6 +246,8 @@ public class SallieMod {
                     try {
                         double newRange = Double.parseDouble(parts[1]);
                         aimbotRange = newRange;
+                        config.aimbotrange = aimbotRange;
+
                         ConfigManager.saveConfig(config);
 
                         Minecraft.getInstance().player.sendMessage(
@@ -269,6 +271,8 @@ public class SallieMod {
 
             if (message.equalsIgnoreCase("?autoteleport on")) {
                 autoTeleportEnabled = true;
+                config.autoTeleportEnabled = autoTeleportEnabled;
+
                 ConfigManager.saveConfig(config);
 
                 Minecraft.getInstance().player.sendMessage(
@@ -278,13 +282,14 @@ public class SallieMod {
                 event.setCanceled(true);
             }
 
-
             if (message.startsWith("?killaura ")) {
                 String[] parts = message.split(" ");
                 if (parts.length == 2) {
                     try {
                         double newRange = Double.parseDouble(parts[1]);
                         AuraRange = newRange;
+                        config.auraRange = AuraRange;
+
                         ConfigManager.saveConfig(config);
 
                         Minecraft.getInstance().player.sendMessage(
@@ -309,6 +314,8 @@ public class SallieMod {
 
             if (message.equalsIgnoreCase("?autoteleport off")) {
                 autoTeleportEnabled = false;
+                config.autoTeleportEnabled = autoTeleportEnabled;
+
                 ConfigManager.saveConfig(config);
 
                 Minecraft.getInstance().player.sendMessage(
@@ -428,6 +435,8 @@ public class SallieMod {
 
             if (message.startsWith("?crash")) {
                 crasher = !crasher;
+                config.crasher = crasher;
+
                 ConfigManager.saveConfig(config);
 
                 Minecraft.getInstance().player.sendMessage(
@@ -507,6 +516,8 @@ public class SallieMod {
 
             if (message.startsWith("?suffix ")) {
                 suffix = message.substring(8);
+                config.suffix = suffix;
+
                 ConfigManager.saveConfig(config);
 
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent("Suffix changed to '" + suffix + "'"), Minecraft.getInstance().player.getUniqueID());
@@ -517,6 +528,8 @@ public class SallieMod {
                 try {
                     String heightString = message.split(" ")[1];
                     teleportHeight = Double.parseDouble(heightString);
+                    config.teleportHeight = teleportHeight;
+
                     ConfigManager.saveConfig(config);
 
                     Minecraft.getInstance().player.sendMessage(new StringTextComponent("Teleport height set to '" + teleportHeight + "'"), Minecraft.getInstance().player.getUniqueID());
@@ -553,6 +566,8 @@ public class SallieMod {
                 try {
                     String far = message.split(" ")[1];
                     HclipFar = Double.parseDouble(far);
+                    config.hclipFar = HclipFar;
+
                     ConfigManager.saveConfig(config);
 
                     Minecraft.getInstance().player.sendMessage(new StringTextComponent("Hclip distance set to '" + HclipFar + "'"), Minecraft.getInstance().player.getUniqueID());
@@ -579,6 +594,7 @@ public class SallieMod {
                         }
 
                         commandDelay = Integer.parseInt(parts[2]);
+                        config.commandDelay = commandDelay;
                         ConfigManager.saveConfig(config);
 
                         Minecraft.getInstance().player.sendMessage(new StringTextComponent("Command delay set to " + commandDelay + " ticks."), Minecraft.getInstance().player.getUniqueID());
@@ -680,6 +696,8 @@ public class SallieMod {
 
                         if (mode == 1 || mode == 2) {
                             rotationMode = mode;
+                            config.rotationMode = rotationMode;
+
                             String modeMessage = (mode == 1) ? "Packet-based rotation" : "Head-based rotation";
                             Minecraft.getInstance().player.sendMessage(new StringTextComponent("Rotation mode changed to: " + modeMessage), Minecraft.getInstance().player.getUniqueID());
                         } else {
@@ -694,12 +712,16 @@ public class SallieMod {
             }
             if (message.startsWith("?suffixdisable")) {
                 suffixDisabled = true;
+                config.suffixDisabled = suffixDisabled;
+
                 ConfigManager.saveConfig(config);
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent("Suffix disabled."), Minecraft.getInstance().player.getUniqueID());
                 event.setCanceled(true);
             }
             if (message.startsWith("?noweather")) {
                 noWeatherEnabled = !noWeatherEnabled;
+                config.noWeatherEnabled = noWeatherEnabled;
+
                 ConfigManager.saveConfig(config);
 
                 String status = noWeatherEnabled ? "enabled" : "disabled";
@@ -975,15 +997,13 @@ public class SallieMod {
 
                             player.sendChatMessage(command);
                         }
-                        if (aimbotEnabled) {
-                            aimbot.alwaysLookAtClosestPlayer();
-                        }
+
 
                         if (aimbotEnabled) {
                             aimbot.alwaysLookAtClosestPlayer();
                         }
 
-                        if (player != null && player.hurtTime > 0 && velocity) {
+                        if (player.hurtTime > 0 && velocity) {
                             player.hurtTime = 0;
                             player.setMotion(0, player.getMotion().y, 0);
                         }
@@ -1021,12 +1041,15 @@ public class SallieMod {
 
             if (AimbotKey.isPressed()) {
                 aimbotEnabled = !aimbotEnabled;
+                config.aimbotEnabled = aimbotEnabled;
                 player.sendMessage(new StringTextComponent(aimbotEnabled ? "Aimbot enabled." : "Aimbot disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
 
             }
             if (FakeCreativeKey.isPressed()) {
                 fakeCreativeEnabled = !fakeCreativeEnabled;
+                config.fakeCreativeEnabled = fakeCreativeEnabled;
+
                 ConfigManager.saveConfig(config);
 
                 if (!fakeCreativeEnabled) {
@@ -1040,6 +1063,8 @@ public class SallieMod {
 
             if (NukerKey.isPressed()) {
                 nukerEnabled = !nukerEnabled;
+                config.nukerEnabled = nukerEnabled;
+
                 player.sendMessage(new StringTextComponent(nukerEnabled ? "Nuker enabled." : "Nuker disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
 
@@ -1047,6 +1072,7 @@ public class SallieMod {
 
             if (SpinKey.isPressed()) {
                 spin = !spin;
+                config.spin = spin;
                 player.sendMessage(new StringTextComponent(spin ? "Spin enabled." : "Spin disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
 
@@ -1054,6 +1080,8 @@ public class SallieMod {
 
             if (VelocityKey.isPressed()) {
                 velocity = !velocity;
+                config.velocity = velocity;
+
                 player.sendMessage(new StringTextComponent(velocity ? "Velocity enabled." : "Velocity disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
 
@@ -1061,6 +1089,7 @@ public class SallieMod {
 
             if (FlightKey.isPressed()) {
                 flightEnabled = !flightEnabled;
+                config.flightEnabled = flightEnabled;
                 player.sendMessage(new StringTextComponent(flightEnabled ? "Flight enabled." : "Flight disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
 
@@ -1069,6 +1098,7 @@ public class SallieMod {
 
             if (CMDSpammer.isPressed()) {
                 CMDSpammerEnabled = !CMDSpammerEnabled;
+                config.cmdSpammerEnabled = CMDSpammerEnabled;
                 player.sendMessage(new StringTextComponent(CMDSpammerEnabled ? "CMDSpammer enabled" : "CMDSpammer disabled"), player.getUniqueID());
                 ConfigManager.saveConfig(config);
 
@@ -1076,6 +1106,8 @@ public class SallieMod {
 
             if (KillAura.isPressed()) {
                 killauraEnabled = !killauraEnabled;
+                config.killauraEnabled = killauraEnabled;
+
                 player.sendMessage(new StringTextComponent(killauraEnabled ? "Killaura enabled." : "Killaura disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
 
@@ -1084,18 +1116,22 @@ public class SallieMod {
             if (teleportKey.isPressed()) {
                 double newY = player.getPosY() + SallieMod.teleportHeight;
                 player.setPosition(player.getPosX(), newY, player.getPosZ());
+                config.teleportHeight = newY;
+
                 ConfigManager.saveConfig(config);
 
             }
 
             if (NoFall.isPressed()) {
                 NoFallEnabled = !NoFallEnabled;
+                config.NoFall = NoFallEnabled;
                 ConfigManager.saveConfig(config);
 
             }
 
             if (toggleParticlesKey.isPressed()) {
                 particlesEnabled = !particlesEnabled;
+                config.particlesEnabled = particlesEnabled;
                 player.sendMessage(new StringTextComponent(particlesEnabled ? "Item Laser enabled." : "Item Laser disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
 
@@ -1116,6 +1152,7 @@ public class SallieMod {
 
             if (teleportToggleKey.isPressed()) {
                 randomTeleportEnabled = !randomTeleportEnabled;
+                config.randomTeleportEnabled = randomTeleportEnabled;
                 player.sendMessage(new StringTextComponent(randomTeleportEnabled ? "RandomTeleport enabled." : "RandomTeleport disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
 
@@ -1123,12 +1160,14 @@ public class SallieMod {
 
             if (NoHurtCamKey.isPressed()) {
                 NoHurtCamEnabled = !NoHurtCamEnabled;
+                config.noHurtCamEnabled = NoHurtCamEnabled;
                 player.sendMessage(new StringTextComponent(NoHurtCamEnabled ? "NoHurtCam enabled." : "NoHurtCam disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
 
             }
             if (StashKey.isPressed()) {
                 StashEnabled = !StashEnabled;
+                config.stashEnabled = StashEnabled;
                 player.sendMessage(new StringTextComponent(StashEnabled ? "Stash enabled." : "Stash disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
 

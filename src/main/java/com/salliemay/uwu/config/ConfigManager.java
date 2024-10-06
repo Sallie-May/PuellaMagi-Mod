@@ -9,7 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class ConfigManager {
-    private static final String CONFIG_FILE = "config.json";
+    private static final String CONFIG_FILE = "config.owo";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public static class Config {
@@ -37,9 +37,9 @@ public class ConfigManager {
         public boolean particlesEnabled = false;
         public boolean suffixDisabled = true;
         public boolean showModules = true;
-        public boolean NoFall = false;
+        public boolean NoFall = true;
         public int rotationMode = 1;
-        public int aimbotrange = 15;
+        public double aimbotrange = 15;
         public int healthlimit = 1000;
         public String suffix = " | PuellaMagi | Trans right !";
         public int commandDelay = 1;
@@ -47,15 +47,26 @@ public class ConfigManager {
 
     public static Config loadConfig() {
         File configFile = new File(CONFIG_FILE);
+
+        System.out.println("Looking for config at: " + configFile.getAbsolutePath());
+
         if (!configFile.exists()) {
             System.out.println("Config file not found. Creating a new one.");
             saveConfig(new Config());
         }
 
         try (FileReader reader = new FileReader(configFile)) {
-            return GSON.fromJson(reader, Config.class);
+            char[] buffer = new char[(int) configFile.length()];
+            reader.read(buffer);
+            reader.read(buffer);
+            System.out.println("Config file contents: " + new String(buffer));
+
+            return GSON.fromJson(new FileReader(configFile), Config.class);
         } catch (IOException e) {
             System.err.println("Failed to load config: " + e.getMessage());
+            return new Config();
+        } catch (Exception e) {
+            System.err.println("Failed to parse config: " + e.getMessage());
             return new Config();
         }
     }
