@@ -57,6 +57,7 @@
 - **Press** `[NoBadEffect Key]` to toggle NoBadEffect.
 - **Press** `[NoHurtCam Key]` to toggle NoHurtCam.
 - **Press** `[NoFall Key]` to toggle NoFall.
+- **Press** `[Jesus]` to toggle Jesus.
 
 ## Bonus Features
 - **Auto Teleport:** Automatically teleport if health drops below 500 HP.
