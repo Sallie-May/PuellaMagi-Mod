@@ -26,6 +26,7 @@
 - `?goto stop`: Stop teleporting.
 - `?autoteleport <on/off>`: Enable or disable automatic teleportation.
 - `?spin <1/2>`: Change type of spinning (1 = packet-based, 2 = head-based).
+- `?speed <number>`: Set the speed to the number. Default: `3.0`.
   
 ### Visual Commands
 - `?color <hexCode>`: Set the health text color using a hex code (e.g., `?color FF5733`).
