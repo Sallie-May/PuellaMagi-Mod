@@ -29,6 +29,9 @@ public class ConfigManager {
         public double teleportHeight = 2.0;
         public double hclipFar = 2.0;
         public float flySpeed = 3.0f;
+        public float SpeedMultiplier = 2.0f;
+        public boolean SpeedEnabled = false;
+
         public double auraRange = 15.0;
         public boolean stashEnabled = false;
         public boolean hasTeleported = false;

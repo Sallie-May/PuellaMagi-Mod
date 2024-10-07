@@ -4,6 +4,7 @@ import com.salliemay.uwu.combat.Aimbot;
 import com.salliemay.uwu.movement.Fly;
 import com.salliemay.uwu.movement.AutoSprint;
 import com.salliemay.uwu.movement.Jesus;
+import com.salliemay.uwu.movement.Speed;
 import com.salliemay.uwu.visual.*;
 import com.salliemay.uwu.world.Nuker;
 import com.salliemay.uwu.world.StashLogger;
@@ -12,8 +13,6 @@ import com.salliemay.uwu.config.ConfigManager;
 import java.awt.Desktop;
 import java.net.URI;
 
-import net.minecraft.block.Blocks;
-import net.minecraft.block.KelpBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -21,7 +20,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -69,26 +67,27 @@ public class SallieMod {
     private static Jesus jesus = new Jesus();
 
 
-    private static final KeyBinding teleportKey = new KeyBinding("VClip", GLFW.GLFW_KEY_K, "SallieConfig");
-    private static final KeyBinding HClipKey = new KeyBinding("Hclip", GLFW.GLFW_KEY_J, "SallieConfig");
-    private static final KeyBinding teleportToggleKey = new KeyBinding("RDM Teleport", GLFW.GLFW_KEY_H, "SallieConfig");
-    private static final KeyBinding KillAura = new KeyBinding("Killaura", GLFW.GLFW_KEY_F, "SallieConfig");
-    private static final KeyBinding AimbotKey = new KeyBinding("Aimbot", GLFW.GLFW_KEY_N, "SallieConfig");
-    private static final KeyBinding toggleParticlesKey = new KeyBinding("Item Laser", GLFW.GLFW_KEY_P, "SallieConfig");
-    private static final KeyBinding NukerKey = new KeyBinding("Nuker", GLFW.GLFW_KEY_Z, "SallieConfig");
-    private static final KeyBinding StashKey = new KeyBinding("Stash", GLFW.GLFW_KEY_M, "SallieConfig");
-    private static final KeyBinding CMDSpammer = new KeyBinding("CMDSpammer", GLFW.GLFW_KEY_DELETE, "SallieConfig");
-    private static final KeyBinding SpinKey = new KeyBinding("Spin", GLFW.GLFW_RELEASE_BEHAVIOR_NONE, "SallieConfig");
-    private static final KeyBinding FakeCreativeKey = new KeyBinding("FakeCreative", GLFW.GLFW_RELEASE_BEHAVIOR_NONE, "SallieConfig");
-    private static final KeyBinding RGBCameraKeys = new KeyBinding("RGBCamera", GLFW.GLFW_RELEASE, "SallieConfig");
-    private static final KeyBinding VelocityKey = new KeyBinding("Velocity", GLFW.GLFW_RELEASE, "SallieConfig");
-    private static final KeyBinding NoBadEffectKey = new KeyBinding("NoBadEffect", GLFW.GLFW_RELEASE, "SallieConfig");
-    private static final KeyBinding NoHurtCamKey = new KeyBinding("NoHurtCam", GLFW.GLFW_RELEASE, "SallieConfig");
-    private static final KeyBinding FlightKey = new KeyBinding("Fly", GLFW.GLFW_RELEASE, "SallieConfig");
-    private static final KeyBinding NoFall = new KeyBinding("NoFall", GLFW.GLFW_RELEASE, "SallieConfig");
-    private static final KeyBinding AutoSprintKey = new KeyBinding("AutoSprint", GLFW.GLFW_RELEASE, "SallieConfig");
-    private static final KeyBinding NoFogKey = new KeyBinding("NoFog", GLFW.GLFW_RELEASE, "SallieConfig");
-    private static final KeyBinding JesusKey = new KeyBinding("Jesus", GLFW.GLFW_RELEASE, "SallieConfig");
+    private static final KeyBinding teleportKey = new KeyBinding("VClip", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding HClipKey = new KeyBinding("Hclip", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding teleportToggleKey = new KeyBinding("RDM Teleport", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding KillAura = new KeyBinding("Killaura", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding AimbotKey = new KeyBinding("Aimbot", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding toggleParticlesKey = new KeyBinding("Item Laser", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding NukerKey = new KeyBinding("Nuker", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding StashKey = new KeyBinding("Stash", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding CMDSpammer = new KeyBinding("CMDSpammer", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding SpinKey = new KeyBinding("Spin", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding FakeCreativeKey = new KeyBinding("FakeCreative", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding RGBCameraKeys = new KeyBinding("RGBCamera", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding VelocityKey = new KeyBinding("Velocity", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding NoBadEffectKey = new KeyBinding("NoBadEffect", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding NoHurtCamKey = new KeyBinding("NoHurtCam", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding FlightKey = new KeyBinding("Fly", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding NoFall = new KeyBinding("NoFall", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding AutoSprintKey = new KeyBinding("AutoSprint", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding NoFogKey = new KeyBinding("NoFog", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding JesusKey = new KeyBinding("Jesus", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    private static final KeyBinding SpeedKey = new KeyBinding("Speed", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
     private static String targetPlayerName = null;
 
     private final com.salliemay.uwu.config.FriendManager friendManager = new com.salliemay.uwu.config.FriendManager();
@@ -109,6 +108,10 @@ public class SallieMod {
     public static boolean NoHurtCamEnabled = config.noHurtCamEnabled;
     public static int rotationMode = config.rotationMode;
     public static int healthlimit = config.healthlimit;
+
+    public static float SpeedMultiplier = config.SpeedMultiplier;
+    public static boolean SpeedEnabled = config.SpeedEnabled;
+
     public static boolean AutoSprintEnabled = config.AutoSprintEnabled;
     private static float currentYaw = 0;
     private static final float yawIncrement = 45;
@@ -175,6 +178,7 @@ public class SallieMod {
             ClientRegistry.registerKeyBinding(FlightKey);
             ClientRegistry.registerKeyBinding(NoFall);
             ClientRegistry.registerKeyBinding(JesusKey);
+            ClientRegistry.registerKeyBinding(SpeedKey);
 
         } catch (Exception e) {
             LOGGER.error("Error during client setup: ", e);
@@ -384,6 +388,7 @@ public class SallieMod {
                 helpMessage.append(TextFormatting.YELLOW + "- ?goto stop: To stop traveling\n");
                 helpMessage.append(TextFormatting.YELLOW + "- ?autoteleport <on/off>: Pretty logic\n");
                 helpMessage.append(TextFormatting.YELLOW + "- ?spin <1/2>: 1 is packet based, 2 is head based\n");
+                helpMessage.append(TextFormatting.YELLOW + "- ?speed <number>: To modify speed (default: 3.0)\n");
 
                 helpMessage.append(TextFormatting.GREEN + "**VISUAL COMMANDS**\n");
                 helpMessage.append(TextFormatting.YELLOW + "- ?color <hexCode>: Set health text color (e.g., ?color FF5733)\n");
@@ -417,6 +422,7 @@ public class SallieMod {
                 helpMessage.append(TextFormatting.YELLOW + "- PRESS " + NoBadEffectKey.getKey() + " TO enable NoBadEffect\n");
                 helpMessage.append(TextFormatting.YELLOW + "- PRESS " + FakeCreativeKey.getKey() + " TO enable NoBadEffect\n");
                 helpMessage.append(TextFormatting.YELLOW + "- PRESS " + JesusKey.getKey() + " TO enable Jesus\n");
+                helpMessage.append(TextFormatting.YELLOW + "- PRESS " + SpeedKey.getKey() + " TO enable Speed\n");
 
                 helpMessage.append(TextFormatting.AQUA + "**BONUS Stuff :**\n");
                 helpMessage.append(TextFormatting.YELLOW + "**Automatically teleport if less than" + healthlimit + "\n");
@@ -591,51 +597,46 @@ public class SallieMod {
                 }
                 event.setCanceled(true);
             }
-            if (message.startsWith("?cmdspammer")) {
+
+            if (message.startsWith("?speed")) {
                 try {
                     String[] parts = message.split(" ");
 
                     if (parts.length < 2) {
-                        throw new IllegalArgumentException("Missing subcommand.");
+                        throw new IllegalArgumentException("Missing speed multiplier value.");
                     }
 
-                    String subCommand = parts[1];
+                    float speedMultiplier = Float.parseFloat(parts[1]);
 
-                    if (subCommand.equalsIgnoreCase("delay")) {
-                        if (parts.length < 3) {
-                            throw new IllegalArgumentException("Missing delay value.");
-                        }
+                    SallieMod.SpeedMultiplier = speedMultiplier;
+                    ConfigManager.saveConfig(config);
 
-                        commandDelay = Integer.parseInt(parts[2]);
-                        config.commandDelay = commandDelay;
-                        ConfigManager.saveConfig(config);
-
-                        Minecraft.getInstance().player.sendMessage(new StringTextComponent("Command delay set to " + commandDelay + " ticks."), Minecraft.getInstance().player.getUniqueID());
-
-                    } else if (subCommand.equalsIgnoreCase("command")) {
-                        if (parts.length < 3) {
-                            throw new IllegalArgumentException("Missing command to spam.");
-                        }
-
-                        ToucheCMD = message.substring(message.indexOf("command") + 8);
-                        ConfigManager.saveConfig(config);
-
-                        Minecraft.getInstance().player.sendMessage(new StringTextComponent("Spamming command set to: " + ToucheCMD), Minecraft.getInstance().player.getUniqueID());
-
-                    } else {
-                        throw new IllegalArgumentException("Unknown subcommand.");
-                    }
+                    Minecraft.getInstance().player.sendMessage(
+                            new StringTextComponent("Speed multiplier set to " + speedMultiplier),
+                            Minecraft.getInstance().player.getUniqueID()
+                    );
 
                 } catch (NumberFormatException e) {
-                    Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid delay value! Please enter a valid number."), Minecraft.getInstance().player.getUniqueID());
+                    Minecraft.getInstance().player.sendMessage(
+                            new StringTextComponent("Invalid number format! Please enter a valid number."),
+                            Minecraft.getInstance().player.getUniqueID()
+                    );
                 } catch (IllegalArgumentException e) {
-                    Minecraft.getInstance().player.sendMessage(new StringTextComponent(e.getMessage()), Minecraft.getInstance().player.getUniqueID());
+                    Minecraft.getInstance().player.sendMessage(
+                            new StringTextComponent(e.getMessage()),
+                            Minecraft.getInstance().player.getUniqueID()
+                    );
                 } catch (Exception e) {
-                    Minecraft.getInstance().player.sendMessage(new StringTextComponent("Invalid command format."), Minecraft.getInstance().player.getUniqueID());
+                    Minecraft.getInstance().player.sendMessage(
+                            new StringTextComponent("Invalid command format."),
+                            Minecraft.getInstance().player.getUniqueID()
+                    );
                 }
 
                 event.setCanceled(true);
             }
+
+
             if (message.startsWith("?tp ")) {
                 String[] parts = message.split(" ");
 
@@ -990,6 +991,11 @@ public class SallieMod {
                             jesus.checkWaterMovement();
                         }
 
+                        if (SpeedEnabled) {
+                            Speed.applyMovement();
+                        }
+
+
 
                         if (targetPlayerName != null) {
                             followPlayer();
@@ -1006,6 +1012,7 @@ public class SallieMod {
                         if (nukerEnabled) {
                             Nuker.tick();
                         }
+
 
 
                         if (CMDSpammerEnabled) {
@@ -1117,6 +1124,14 @@ public class SallieMod {
                 JesusEnabled = !JesusEnabled;
                 config.Jesus = JesusEnabled;
                 player.sendMessage(new StringTextComponent(JesusEnabled ? "Jesus enabled." : "Jesus disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+
+            }
+
+            if (SpeedKey.isPressed()) {
+                SpeedEnabled = !SpeedEnabled;
+                config.SpeedEnabled = SpeedEnabled;
+                player.sendMessage(new StringTextComponent(SpeedEnabled ? "Speed enabled." : "Speed disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
 
             }

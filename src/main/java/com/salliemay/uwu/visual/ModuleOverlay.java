@@ -2,6 +2,7 @@ package com.salliemay.uwu.visual;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.salliemay.uwu.SallieMod;
+import com.salliemay.uwu.movement.Speed;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -51,11 +52,20 @@ public class ModuleOverlay {
             activeModules.add("Killaura (Enabled)");
         }
 
+        if (SallieMod.autoTeleportEnabled) {
+            activeModules.add("Autoteleport (Enabled)");
+        }
+
+
         if (SallieMod.CMDSpammerEnabled) {
             activeModules.add("Command Spammer (Enabled)");
         }
         if (SallieMod.spin) {
             activeModules.add("Spin (Enabled)");
+        }
+
+        if (SallieMod.SpeedEnabled) {
+            activeModules.add("Speed (Enabled) (Speed:"+ SallieMod.SpeedMultiplier + ")");
         }
 
         if (SallieMod.particlesEnabled) {
