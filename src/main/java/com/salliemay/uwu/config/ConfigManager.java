@@ -29,8 +29,10 @@ public class ConfigManager {
         public double teleportHeight = 2.0;
         public double hclipFar = 2.0;
         public float flySpeed = 3.0f;
+        public float StepHeight = 5.0f;
         public float SpeedMultiplier = 2.0f;
         public boolean SpeedEnabled = false;
+        public boolean TrueSightEnabled = true;
 
         public double auraRange = 15.0;
         public boolean stashEnabled = false;
@@ -38,10 +40,18 @@ public class ConfigManager {
         public boolean rgbCamEnabled = false;
         public boolean cmdSpammerEnabled = false;
         public boolean particlesEnabled = false;
+        public boolean StepEnabled = true;
         public boolean suffixDisabled = true;
         public boolean showModules = true;
         public boolean NoFall = true;
+        public long timeOfDay = 0;
         public boolean AutoSprintEnabled = true;
+        public boolean GlowESPEnabled = true;
+        public boolean AmbienceEnabled = false;
+        public boolean AirJumpEnabled = false;
+
+        public boolean SpiderEnabled = false;
+        public boolean RespawnEnabled = true;
         public boolean NoFogEnabled = true;
         public boolean Jesus = false;
         public int rotationMode = 1;

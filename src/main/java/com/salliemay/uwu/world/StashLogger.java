@@ -21,7 +21,6 @@ import java.util.Set;
 @Mod.EventBusSubscriber(modid = SallieMod.MOD_ID, value = Dist.CLIENT)
 public class StashLogger {
 
-    private final int shulkersThreshold = 1;
     private final int chunkRadius = 8;
     private long lastNotificationTime = 0;
     private final long notificationCooldown = 600;
@@ -51,6 +50,7 @@ public class StashLogger {
             }
         }
 
+        int shulkersThreshold = 1;
         if (totalShulkerCount >= shulkersThreshold && canSendNotification()) {
             sendNotification(totalShulkerCount, centerChunkX, centerChunkZ);
         }
@@ -121,12 +121,12 @@ public class StashLogger {
 
         removeNonExistentShulkers();
 
-        fontRenderer.drawString(event.getMatrixStack(), "Shulker Boxes:", xOffset, yOffset, 0xFFFFFF);
+        fontRenderer.drawStringWithShadow(event.getMatrixStack(), "Shulker Boxes:", xOffset, yOffset, 0xFFFFFF);
         yOffset += 10;
 
         for (BlockPos pos : shulkerBoxPositions) {
             String posString = String.format("X: %d, Y: %d, Z: %d", pos.getX(), pos.getY(), pos.getZ());
-            fontRenderer.drawString(event.getMatrixStack(), posString, xOffset, yOffset, 0xFFFFFF);
+            fontRenderer.drawStringWithShadow(event.getMatrixStack(), posString, xOffset, yOffset, 0xFFFFFF);
             yOffset += 10;
         }
     }

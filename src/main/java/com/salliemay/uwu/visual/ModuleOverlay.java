@@ -2,7 +2,6 @@ package com.salliemay.uwu.visual;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.salliemay.uwu.SallieMod;
-import com.salliemay.uwu.movement.Speed;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -31,7 +30,7 @@ public class ModuleOverlay {
             "Bisexual Flag",
             "Pansexual Flag",
             "Genderqueer Flag",
-            "Nonbinary Flag",
+            "Non-binary Flag",
     };
 
     private static int currentGradientIndex = 0;
@@ -49,11 +48,20 @@ public class ModuleOverlay {
         activeModules.clear();
 
         if (SallieMod.killauraEnabled) {
-            activeModules.add("Killaura (Enabled)");
+            activeModules.add("Kill-aura (Enabled)");
+        }
+        if (SallieMod.StepEnabled) {
+            activeModules.add("Step (Enabled)");
         }
 
         if (SallieMod.autoTeleportEnabled) {
-            activeModules.add("Autoteleport (Enabled)");
+            activeModules.add("Auto-teleport (Enabled)");
+        }
+        if (SallieMod.GlowESPEnabled) {
+            activeModules.add("GlowESP (Enabled)");
+        }
+        if (SallieMod.SpiderEnabled) {
+            activeModules.add("Spider (Enabled)");
         }
 
 
@@ -64,12 +72,19 @@ public class ModuleOverlay {
             activeModules.add("Spin (Enabled)");
         }
 
+        if (SallieMod.RespawnEnabled) {
+            activeModules.add("Respawn (Enabled)");
+        }
+        if (SallieMod.TrueSightEnabled) {
+            activeModules.add("TrueSight (Enabled)");
+        }
+
         if (SallieMod.SpeedEnabled) {
             activeModules.add("Speed (Enabled) (Speed:"+ SallieMod.SpeedMultiplier + ")");
         }
 
         if (SallieMod.particlesEnabled) {
-            activeModules.add("Item Laser (Enabled)");
+            activeModules.add("ItemESP (Enabled)");
         }
 
         if (SallieMod.randomTeleportEnabled) {
@@ -86,7 +101,7 @@ public class ModuleOverlay {
         }
 
         if (SallieMod.aimbotEnabled) {
-            activeModules.add("Aimbot Enabled (Range : "+SallieMod.aimbotRange+" )");
+            activeModules.add("Aim-bot Enabled (Range : "+SallieMod.aimbotRange+" )");
         }
         if (SallieMod.NoHurtCamEnabled) {
             activeModules.add("NoHurtCam (Enabled)");
@@ -110,6 +125,13 @@ public class ModuleOverlay {
         }
         if (SallieMod.fakeCreativeEnabled) {
             activeModules.add("Fake Creative (Enabled)");
+        }
+
+        if (SallieMod.AirJumpEnabled) {
+            activeModules.add("Air Jump(Enabled)");
+        }
+        if (SallieMod.AmbienceEnabled) {
+            activeModules.add("Ambience (Enabled)");
         }
 
         if (SallieMod.noWeatherEnabled) {
@@ -160,7 +182,6 @@ public class ModuleOverlay {
     }
 
     private static int getColorForPosition(float position, int[] gradientColors) {
-        float segmentLength = (float) gradientColors.length / 1.0f;
         int startSegment = (int) (position * (gradientColors.length - 1));
         int endSegment = Math.min(startSegment + 1, gradientColors.length - 1);
 

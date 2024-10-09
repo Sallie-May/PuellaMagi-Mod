@@ -1,11 +1,10 @@
 package com.salliemay.uwu;
 import com.salliemay.uwu.combat.Aura;
 import com.salliemay.uwu.combat.Aimbot;
-import com.salliemay.uwu.movement.Fly;
-import com.salliemay.uwu.movement.AutoSprint;
-import com.salliemay.uwu.movement.Jesus;
-import com.salliemay.uwu.movement.Speed;
+import com.salliemay.uwu.misc.Respawn;
+import com.salliemay.uwu.movement.*;
 import com.salliemay.uwu.visual.*;
+import com.salliemay.uwu.visual.TargetHUD;
 import com.salliemay.uwu.world.Nuker;
 import com.salliemay.uwu.world.StashLogger;
 import com.salliemay.uwu.config.ConfigManager;
@@ -21,6 +20,9 @@ import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.world.GameType;
+import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraft.client.Minecraft;
@@ -29,6 +31,8 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import com.salliemay.uwu.gui.ClickGui;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.event.RegistryEvent;
@@ -65,30 +69,40 @@ public class SallieMod {
 
     private static final ConfigManager.Config config = ConfigManager.loadConfig();
     private static Jesus jesus = new Jesus();
+    private static GlowESP Glow = new GlowESP();
 
 
-    private static final KeyBinding teleportKey = new KeyBinding("VClip", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding HClipKey = new KeyBinding("Hclip", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding teleportToggleKey = new KeyBinding("RDM Teleport", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding KillAura = new KeyBinding("Killaura", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding AimbotKey = new KeyBinding("Aimbot", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding toggleParticlesKey = new KeyBinding("Item Laser", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding NukerKey = new KeyBinding("Nuker", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding StashKey = new KeyBinding("Stash", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding CMDSpammer = new KeyBinding("CMDSpammer", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding SpinKey = new KeyBinding("Spin", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding FakeCreativeKey = new KeyBinding("FakeCreative", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding RGBCameraKeys = new KeyBinding("RGBCamera", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding VelocityKey = new KeyBinding("Velocity", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding teleportKey = new KeyBinding("VClip", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding HClipKey = new KeyBinding("Hclip", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding teleportToggleKey = new KeyBinding("RDM Teleport", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding KillAura = new KeyBinding("Killaura", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding AimbotKey = new KeyBinding("Aimbot", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding toggleParticlesKey = new KeyBinding("Item Laser", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding NukerKey = new KeyBinding("Nuker", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding StashKey = new KeyBinding("Stash", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding CMDSpammer = new KeyBinding("CMDSpammer", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding SpinKey = new KeyBinding("Spin", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding FakeCreativeKey = new KeyBinding("FakeCreative", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding RGBCameraKeys = new KeyBinding("RGBCamera", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding VelocityKey = new KeyBinding("Velocity", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
     private static final KeyBinding NoBadEffectKey = new KeyBinding("NoBadEffect", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding NoHurtCamKey = new KeyBinding("NoHurtCam", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding FlightKey = new KeyBinding("Fly", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding NoFall = new KeyBinding("NoFall", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding AutoSprintKey = new KeyBinding("AutoSprint", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding NoFogKey = new KeyBinding("NoFog", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding JesusKey = new KeyBinding("Jesus", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
-    private static final KeyBinding SpeedKey = new KeyBinding("Speed", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding NoHurtCamKey = new KeyBinding("NoHurtCam", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding FlightKey = new KeyBinding("Fly", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding NoFall = new KeyBinding("NoFall", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding AutoSprintKey = new KeyBinding("AutoSprint", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding NoFogKey = new KeyBinding("NoFog", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding JesusKey = new KeyBinding("Jesus", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding SpeedKey = new KeyBinding("Speed", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding TrueSightKey = new KeyBinding("TrueSight", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding AmbienceKey = new KeyBinding("Ambience", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding AirJumpKey = new KeyBinding("AirJump", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding GlowESPKey = new KeyBinding("GlowESP", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding SpiderKey = new KeyBinding("Spider", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding RespawnKey = new KeyBinding("AutoRespawn", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
+    public static final KeyBinding StepKey = new KeyBinding("Step", GLFW.GLFW_KEY_UNKNOWN, "SallieConfig");
     private static String targetPlayerName = null;
+    public static final KeyBinding toggleClickGuiKey = new KeyBinding("Open Click GUI", GLFW.GLFW_KEY_I, "SallieConfig");
+
 
     private final com.salliemay.uwu.config.FriendManager friendManager = new com.salliemay.uwu.config.FriendManager();
 
@@ -98,13 +112,21 @@ public class SallieMod {
     public static boolean autoTeleportEnabled = config.autoTeleportEnabled;
     public static boolean aimbotEnabled = config.aimbotEnabled;
     public static boolean nukerEnabled = config.nukerEnabled;
+    public static boolean AirJumpEnabled = config.AirJumpEnabled;
     public static boolean crasher = config.crasher;
+    public static boolean SpiderEnabled = config.SpiderEnabled;
     public static boolean spin = config.spin;
+    public static boolean RespawnEnabled = config.RespawnEnabled;
     public static boolean fakeCreativeEnabled = config.fakeCreativeEnabled;
     public static boolean noWeatherEnabled = config.noWeatherEnabled;
     public static boolean noBadEffectEnabled = config.noBadEffectEnabled;
     public static boolean velocity = config.velocity;
     public static boolean JesusEnabled = config.Jesus;
+    public static boolean StepEnabled = config.StepEnabled;
+    public static boolean AmbienceEnabled = config.AmbienceEnabled;
+    public static long timeOfDay = config.timeOfDay;
+    public static float StepHeight = config.StepHeight;
+
     public static boolean NoHurtCamEnabled = config.noHurtCamEnabled;
     public static int rotationMode = config.rotationMode;
     public static int healthlimit = config.healthlimit;
@@ -132,6 +154,7 @@ public class SallieMod {
     public static float FlySpeed = config.flySpeed;
     public static double AuraRange = config.auraRange;
     public static boolean StashEnabled = config.stashEnabled;
+    public static boolean GlowESPEnabled = config.GlowESPEnabled;
     public static boolean RGBCamEnabled = config.rgbCamEnabled;
     public static boolean CMDSpammerEnabled = config.cmdSpammerEnabled;
     public static boolean particlesEnabled = config.particlesEnabled;
@@ -139,10 +162,21 @@ public class SallieMod {
     public static double aimbotRange = config.aimbotrange;
     public static boolean NoFogEnabled = config.NoFogEnabled;
 
+    public static boolean TrueSightEnabled = config.TrueSightEnabled;
+
     private static final Aimbot aimbot = new Aimbot();
     private static final Aura entityAttacker = new Aura();
     private static boolean showModules = config.showModules;
     public static boolean NoBadEffect = config.noBadEffectEnabled;
+
+
+
+    private static ClickGui clickGui;
+
+    private static final long MORNING = 1000L;
+    private static final long DAY = 6000L;
+    private static final long SUNSET = 13000L;
+    private static final long NIGHT = 1;
 
 
     public SallieMod() {
@@ -151,6 +185,8 @@ public class SallieMod {
         MinecraftForge.EVENT_BUS.register(Fly.class);
         MinecraftForge.EVENT_BUS.register(Aura.class);
         MinecraftForge.EVENT_BUS.register(Aimbot.class);
+        MinecraftForge.EVENT_BUS.register(Spider.class);
+        MinecraftForge.EVENT_BUS.register(Respawn.class);
         MinecraftForge.EVENT_BUS.register(new StashLogger());
         MinecraftForge.EVENT_BUS.register(this);
         rgbModule = new RGBCam();
@@ -170,6 +206,8 @@ public class SallieMod {
             ClientRegistry.registerKeyBinding(StashKey);
             ClientRegistry.registerKeyBinding(CMDSpammer);
             ClientRegistry.registerKeyBinding(SpinKey);
+            ClientRegistry.registerKeyBinding(toggleClickGuiKey);
+            ClientRegistry.registerKeyBinding(StepKey);
             ClientRegistry.registerKeyBinding(FakeCreativeKey);
             ClientRegistry.registerKeyBinding(RGBCameraKeys);
             ClientRegistry.registerKeyBinding(NoBadEffectKey);
@@ -178,7 +216,11 @@ public class SallieMod {
             ClientRegistry.registerKeyBinding(FlightKey);
             ClientRegistry.registerKeyBinding(NoFall);
             ClientRegistry.registerKeyBinding(JesusKey);
+            ClientRegistry.registerKeyBinding(AirJumpKey);
             ClientRegistry.registerKeyBinding(SpeedKey);
+            ClientRegistry.registerKeyBinding(TrueSightKey);
+            ClientRegistry.registerKeyBinding(AmbienceKey);
+            ClientRegistry.registerKeyBinding(SpiderKey);
 
         } catch (Exception e) {
             LOGGER.error("Error during client setup: ", e);
@@ -212,6 +254,7 @@ public class SallieMod {
     private static double targetX, targetY, targetZ;
     private static double teleportDistance = 5.0;
     private static List<String> activeModules = new ArrayList<>();
+
 
 
     @SubscribeEvent
@@ -297,6 +340,48 @@ public class SallieMod {
                 );
                 event.setCanceled(true);
             }
+            if (message.equalsIgnoreCase("?autoteleport on")) {
+                autoTeleportEnabled = true;
+                config.autoTeleportEnabled = autoTeleportEnabled;
+
+                ConfigManager.saveConfig(config);
+
+                Minecraft.getInstance().player.sendMessage(
+                        new StringTextComponent("Auto teleport on low health enabled."),
+                        Minecraft.getInstance().player.getUniqueID()
+                );
+                event.setCanceled(true);
+            }
+
+            if (message.startsWith("?step ")) {
+                String[] parts = message.split(" ");
+                if (parts.length == 2) {
+                    try {
+                        float newStepHeight = Float.parseFloat(parts[1]);
+
+                        StepHeight = newStepHeight;
+                        config.StepHeight = StepHeight;
+                        ConfigManager.saveConfig(config);
+
+                        Minecraft.getInstance().player.sendMessage(
+                                new StringTextComponent("Step height set to " + newStepHeight + "."),
+                                Minecraft.getInstance().player.getUniqueID()
+                        );
+                    } catch (NumberFormatException e) {
+                        Minecraft.getInstance().player.sendMessage(
+                                new StringTextComponent("Invalid step height. Please enter a valid number."),
+                                Minecraft.getInstance().player.getUniqueID()
+                        );
+                    }
+                } else {
+                    Minecraft.getInstance().player.sendMessage(
+                            new StringTextComponent("Usage: ?step <value>"),
+                            Minecraft.getInstance().player.getUniqueID()
+                    );
+                }
+                event.setCanceled(true);
+            }
+
 
             if (message.startsWith("?killaura ")) {
                 String[] parts = message.split(" ");
@@ -338,6 +423,38 @@ public class SallieMod {
                         new StringTextComponent("Auto teleport on low health disabled."),
                         Minecraft.getInstance().player.getUniqueID()
                 );
+                event.setCanceled(true);
+            }
+            if (message.startsWith("?time ")) {
+                String timeArg = message.substring(6).toUpperCase();
+                try {
+                    long newTime = Long.parseLong(timeArg);
+                    timeOfDay = newTime % 24000;
+                    mc.player.sendMessage(new StringTextComponent("Time set to " + newTime), mc.player.getUniqueID());
+                } catch (NumberFormatException e) {
+                    switch (timeArg) {
+                        case "MORNING":
+                            timeOfDay = MORNING;
+                            break;
+                        case "DAY":
+                            timeOfDay = DAY;
+                            break;
+                        case "SUNSET":
+                            timeOfDay = SUNSET;
+                            break;
+                        case "NIGHT":
+                            timeOfDay = NIGHT;
+                            break;
+                        default:
+                            mc.player.sendMessage(new StringTextComponent(TextFormatting.RED + "Invalid time! Use an integer or one of: MORNING, DAY, SUNSET, NIGHT."), mc.player.getUniqueID());
+                            return;
+                    }
+                    config.timeOfDay = timeOfDay;
+
+                    ConfigManager.saveConfig(config);
+
+                    mc.player.sendMessage(new StringTextComponent("Time set to " + timeArg), mc.player.getUniqueID());
+                }
                 event.setCanceled(true);
             }
 
@@ -389,6 +506,7 @@ public class SallieMod {
                 helpMessage.append(TextFormatting.YELLOW + "- ?autoteleport <on/off>: Pretty logic\n");
                 helpMessage.append(TextFormatting.YELLOW + "- ?spin <1/2>: 1 is packet based, 2 is head based\n");
                 helpMessage.append(TextFormatting.YELLOW + "- ?speed <number>: To modify speed (default: 3.0)\n");
+                helpMessage.append(TextFormatting.YELLOW + "- ?step <number>: To modify speed (default: 3.0)\n");
 
                 helpMessage.append(TextFormatting.GREEN + "**VISUAL COMMANDS**\n");
                 helpMessage.append(TextFormatting.YELLOW + "- ?color <hexCode>: Set health text color (e.g., ?color FF5733)\n");
@@ -423,6 +541,9 @@ public class SallieMod {
                 helpMessage.append(TextFormatting.YELLOW + "- PRESS " + FakeCreativeKey.getKey() + " TO enable NoBadEffect\n");
                 helpMessage.append(TextFormatting.YELLOW + "- PRESS " + JesusKey.getKey() + " TO enable Jesus\n");
                 helpMessage.append(TextFormatting.YELLOW + "- PRESS " + SpeedKey.getKey() + " TO enable Speed\n");
+                helpMessage.append(TextFormatting.YELLOW + "- PRESS " + StepKey.getKey() + " TO enable Step\n");
+                helpMessage.append(TextFormatting.YELLOW + "- PRESS " + SpiderKey.getKey() + " TO enable Spider\n");
+                helpMessage.append(TextFormatting.YELLOW + "- PRESS " + AirJumpKey.getKey() + " TO enable AirJump\n");
 
                 helpMessage.append(TextFormatting.AQUA + "**BONUS Stuff :**\n");
                 helpMessage.append(TextFormatting.YELLOW + "**Automatically teleport if less than" + healthlimit + "\n");
@@ -542,6 +663,9 @@ public class SallieMod {
                 Minecraft.getInstance().player.sendMessage(new StringTextComponent("Suffix changed to '" + suffix + "'"), Minecraft.getInstance().player.getUniqueID());
                 event.setCanceled(true);
             }
+
+
+
 
             if (message.startsWith("?vclip")) {
                 try {
@@ -783,6 +907,8 @@ public class SallieMod {
 
     @SubscribeEvent
     public void onRenderGameOverlay(RenderGameOverlayEvent event) {
+
+
         if (event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
             Minecraft mc = Minecraft.getInstance();
 
@@ -812,6 +938,7 @@ public class SallieMod {
                 effect == Effects.SLOWNESS ||
                 effect == Effects.WEAKNESS ||
                 effect == Effects.HUNGER;
+
     }
 
 
@@ -1005,6 +1132,10 @@ public class SallieMod {
                             randomTeleport(player);
                         }
 
+                        if (GlowESPEnabled) {
+                            Glow.toggle();
+                        }
+
                         if (killauraEnabled) {
                             entityAttacker.attackNearbyEntities();
                         }
@@ -1031,7 +1162,7 @@ public class SallieMod {
                             AutoSprint.tick();
                         }
                         if (player.hurtTime > 0 && velocity) {
-                            player.hurtTime = 0;
+                            player.maxHurtTime  = 0;
                             player.setMotion(0, player.getMotion().y, 0);
 
 
@@ -1044,9 +1175,18 @@ public class SallieMod {
                             MakeCreative(player);
                         }
 
+                        if (TrueSightEnabled) {
+                            TrueSight.revealEntities();
+                        }
+
+                        if (AirJumpEnabled) {
+                            AirJump.performAirJump();
+                        }
+
                         if (NoFogEnabled) {
                             NoFog.disableFog();
                         }
+
                         if (NoFallEnabled) {
                             NoFalling();
                             mc.player.fallDistance = 0.0F;
@@ -1067,6 +1207,7 @@ public class SallieMod {
             }
         }
 
+
         @SubscribeEvent
         public static void onKeyPress(InputEvent.KeyInputEvent event) {
             ClientPlayerEntity player = Minecraft.getInstance().player;
@@ -1075,9 +1216,8 @@ public class SallieMod {
             if (AimbotKey.isPressed()) {
                 aimbotEnabled = !aimbotEnabled;
                 config.aimbotEnabled = aimbotEnabled;
-                player.sendMessage(new StringTextComponent(aimbotEnabled ? "Aimbot enabled." : "Aimbot disabled."), player.getUniqueID());
+                player.sendMessage(getFormattedMessage(aimbotEnabled ? "Aimbot enabled." : "Aimbot disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
-
             }
             if (FakeCreativeKey.isPressed()) {
                 fakeCreativeEnabled = !fakeCreativeEnabled;
@@ -1087,96 +1227,140 @@ public class SallieMod {
 
                 if (!fakeCreativeEnabled) {
                     MakeSurvival(player);
-                    player.sendMessage(new StringTextComponent("Fake Creative disabled."), player.getUniqueID());
+                    player.sendMessage(getFormattedMessage("Fake Creative disabled."), player.getUniqueID());
                 } else {
-                    player.sendMessage(new StringTextComponent("Fake Creative enabled."), player.getUniqueID());
+                    player.sendMessage(getFormattedMessage("Fake Creative enabled."), player.getUniqueID());
                 }
             }
-
 
             if (NoFogKey.isPressed()) {
                 NoFogEnabled = !NoFogEnabled;
                 config.NoFogEnabled = NoFogEnabled;
 
-                player.sendMessage(new StringTextComponent(NoFogEnabled ? "NoFog enabled." : "Nuker disabled."), player.getUniqueID());
+                player.sendMessage(getFormattedMessage(NoFogEnabled ? "NoFog enabled." : "Nuker disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
+            }
 
+            if (RespawnKey.isPressed()) {
+                RespawnEnabled = !RespawnEnabled;
+                config.RespawnEnabled = RespawnEnabled;
+
+                player.sendMessage(getFormattedMessage(NoFogEnabled ? "NoFog enabled." : "Nuker disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+            }
+            if (GlowESPKey.isPressed()) {
+                GlowESPEnabled = !GlowESPEnabled;
+                config.GlowESPEnabled = GlowESPEnabled;
+
+                player.sendMessage(getFormattedMessage(GlowESPEnabled ? "GlowESP enabled." : "GlowESP disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+            }
+            if (SpiderKey.isPressed()) {
+                SpiderEnabled = !SpiderEnabled;
+                config.SpiderEnabled = SpiderEnabled;
+
+                player.sendMessage(getFormattedMessage(SpiderEnabled ? "Spider enabled." : "Spider disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+            }
+
+            if (AirJumpKey.isPressed()) {
+                AirJumpEnabled = !AirJumpEnabled;
+                config.AirJumpEnabled = AirJumpEnabled;
+
+                player.sendMessage(getFormattedMessage(AirJumpEnabled ? "AirJump enabled." : "AirJump disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+            }
+            if (AmbienceKey.isPressed()) {
+                AmbienceEnabled = !AmbienceEnabled;
+                config.AmbienceEnabled = AmbienceEnabled;
+
+                player.sendMessage(getFormattedMessage(AmbienceEnabled ? "Ambience enabled." : "Ambience disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
+            }
+            if (TrueSightKey.isPressed()) {
+                TrueSightEnabled = !TrueSightEnabled;
+                config.TrueSightEnabled = TrueSightEnabled;
+
+                player.sendMessage(getFormattedMessage(TrueSightEnabled ? "TrueSight enabled." : "TrueSight disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
             }
 
             if (NukerKey.isPressed()) {
                 nukerEnabled = !nukerEnabled;
                 config.nukerEnabled = nukerEnabled;
 
-                player.sendMessage(new StringTextComponent(nukerEnabled ? "Nuker enabled." : "Nuker disabled."), player.getUniqueID());
+                player.sendMessage(getFormattedMessage(nukerEnabled ? "Nuker enabled." : "Nuker disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
-
             }
 
+            if (toggleClickGuiKey.isPressed()) {
+                ClickGui clickGui = new ClickGui();
+                clickGui.toggle();
+
+            }
             if (SpinKey.isPressed()) {
                 spin = !spin;
                 config.spin = spin;
-                player.sendMessage(new StringTextComponent(spin ? "Spin enabled." : "Spin disabled."), player.getUniqueID());
+                player.sendMessage(getFormattedMessage(spin ? "Spin enabled." : "Spin disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
-
             }
 
             if (JesusKey.isPressed()) {
                 JesusEnabled = !JesusEnabled;
                 config.Jesus = JesusEnabled;
-                player.sendMessage(new StringTextComponent(JesusEnabled ? "Jesus enabled." : "Jesus disabled."), player.getUniqueID());
+                player.sendMessage(getFormattedMessage(JesusEnabled ? "Jesus enabled." : "Jesus disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
-
             }
 
             if (SpeedKey.isPressed()) {
                 SpeedEnabled = !SpeedEnabled;
                 config.SpeedEnabled = SpeedEnabled;
-                player.sendMessage(new StringTextComponent(SpeedEnabled ? "Speed enabled." : "Speed disabled."), player.getUniqueID());
+                player.sendMessage(getFormattedMessage(SpeedEnabled ? "Speed enabled." : "Speed disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
-
             }
 
             if (VelocityKey.isPressed()) {
                 velocity = !velocity;
                 config.velocity = velocity;
 
-                player.sendMessage(new StringTextComponent(velocity ? "Velocity enabled." : "Velocity disabled."), player.getUniqueID());
+                player.sendMessage(getFormattedMessage(velocity ? "Velocity enabled." : "Velocity disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
-
             }
 
             if (AutoSprintKey.isPressed()) {
                 AutoSprintEnabled = !AutoSprintEnabled;
                 config.AutoSprintEnabled = AutoSprintEnabled;
-                player.sendMessage(new StringTextComponent(velocity ? "AutoSprint enabled." : "AutoSprint disabled."), player.getUniqueID());
+                player.sendMessage(getFormattedMessage(AutoSprintEnabled ? "AutoSprint enabled." : "AutoSprint disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
+            }
 
+            if (StepKey.isPressed()) {
+                StepEnabled = !StepEnabled;
+                config.StepEnabled = StepEnabled;
+                player.sendMessage(getFormattedMessage(StepEnabled ? "Step enabled." : "Step disabled."), player.getUniqueID());
+                ConfigManager.saveConfig(config);
             }
 
             if (FlightKey.isPressed()) {
                 flightEnabled = !flightEnabled;
                 config.flightEnabled = flightEnabled;
-                player.sendMessage(new StringTextComponent(flightEnabled ? "Flight enabled." : "Flight disabled."), player.getUniqueID());
+                player.sendMessage(getFormattedMessage(flightEnabled ? "Flight enabled." : "Flight disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
-
             }
-
 
             if (CMDSpammer.isPressed()) {
                 CMDSpammerEnabled = !CMDSpammerEnabled;
                 config.cmdSpammerEnabled = CMDSpammerEnabled;
-                player.sendMessage(new StringTextComponent(CMDSpammerEnabled ? "CMDSpammer enabled" : "CMDSpammer disabled"), player.getUniqueID());
+                player.sendMessage(getFormattedMessage(CMDSpammerEnabled ? "CMDSpammer enabled" : "CMDSpammer disabled"), player.getUniqueID());
                 ConfigManager.saveConfig(config);
-
             }
 
             if (KillAura.isPressed()) {
                 killauraEnabled = !killauraEnabled;
                 config.killauraEnabled = killauraEnabled;
 
-                player.sendMessage(new StringTextComponent(killauraEnabled ? "Killaura enabled." : "Killaura disabled."), player.getUniqueID());
+                player.sendMessage(getFormattedMessage(killauraEnabled ? "Killaura enabled." : "Killaura disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
-
             }
 
             if (teleportKey.isPressed()) {
@@ -1185,22 +1369,19 @@ public class SallieMod {
                 config.teleportHeight = newY;
 
                 ConfigManager.saveConfig(config);
-
             }
 
             if (NoFall.isPressed()) {
                 NoFallEnabled = !NoFallEnabled;
                 config.NoFall = NoFallEnabled;
                 ConfigManager.saveConfig(config);
-
             }
 
             if (toggleParticlesKey.isPressed()) {
                 particlesEnabled = !particlesEnabled;
                 config.particlesEnabled = particlesEnabled;
-                player.sendMessage(new StringTextComponent(particlesEnabled ? "Item Laser enabled." : "Item Laser disabled."), player.getUniqueID());
+                player.sendMessage(getFormattedMessage(particlesEnabled ? "Item Laser enabled." : "Item Laser disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
-
             }
 
             if (HClipKey.isPressed()) {
@@ -1219,26 +1400,28 @@ public class SallieMod {
             if (teleportToggleKey.isPressed()) {
                 randomTeleportEnabled = !randomTeleportEnabled;
                 config.randomTeleportEnabled = randomTeleportEnabled;
-                player.sendMessage(new StringTextComponent(randomTeleportEnabled ? "RandomTeleport enabled." : "RandomTeleport disabled."), player.getUniqueID());
+                player.sendMessage(getFormattedMessage(randomTeleportEnabled ? "RandomTeleport enabled." : "RandomTeleport disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
-
             }
 
             if (NoHurtCamKey.isPressed()) {
                 NoHurtCamEnabled = !NoHurtCamEnabled;
                 config.noHurtCamEnabled = NoHurtCamEnabled;
-                player.sendMessage(new StringTextComponent(NoHurtCamEnabled ? "NoHurtCam enabled." : "NoHurtCam disabled."), player.getUniqueID());
+                player.sendMessage(getFormattedMessage(NoHurtCamEnabled ? "NoHurtCam enabled." : "NoHurtCam disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
-
             }
             if (StashKey.isPressed()) {
                 StashEnabled = !StashEnabled;
                 config.stashEnabled = StashEnabled;
-                player.sendMessage(new StringTextComponent(StashEnabled ? "Stash enabled." : "Stash disabled."), player.getUniqueID());
+                player.sendMessage(getFormattedMessage(StashEnabled ? "Stash enabled." : "Stash disabled."), player.getUniqueID());
                 ConfigManager.saveConfig(config);
-
             }
+        }
+
+        private static StringTextComponent getFormattedMessage(String message) {
+            return new StringTextComponent("PuellaMagi: " + message);
         }}
+
 
     private static void handleSpinRotation(ClientPlayerEntity player) {
         currentYaw += yawIncrement;
