@@ -8,7 +8,8 @@
 - **Visual Commands:** Customize health text color, enable/disable message suffixes, and apply gradient effects.
 - **Utility Commands:** Command spamming tools for advanced users.
 - **Keybindings:** Quick access to various actions such as VClip, HClip, teleportation, aimbot, and more.
-
+- **ClickGUI:** Quicker access to everything ! (Press `[ClickGUI Key]`)
+- 
 ## Installation
 1. Download the latest release from the [releases page](https://github.com/Sallie-May/PuellaMagi-Mod/releases).
 2. Place the mod `.jar` file into your Minecraft `mods` folder.
@@ -27,6 +28,7 @@
 - `?autoteleport <on/off>`: Enable or disable automatic teleportation.
 - `?spin <1/2>`: Change type of spinning (1 = packet-based, 2 = head-based).
 - `?speed <number>`: Set the speed to the number. Default: `3.0`.
+- `?step <number>`: Set the step to the number. Default: `5.0`.
   
 ### Visual Commands
 - `?color <hexCode>`: Set the health text color using a hex code (e.g., `?color FF5733`).
@@ -45,6 +47,7 @@
 - `?friend remove (username)`: Remove friend from the friend list.
 
 ### Key Commands
+- **Press** `[ClickGUI Key]` to open the ClickGUI.
 - **Press** `[Teleport Key]` to VClip (use `?vclip` to modify).
 - **Press** `[Fly Key]` to fly (use `?fly <speed>` to modify).
 - **Press** `[HClip Key]` to HClip (use `?hclip` to modify).
@@ -53,13 +56,7 @@
 - **Press** `[Aimbot Key]` to toggle Aimbot.
 - **Press** `[CMD Spammer Key]` to enable the CMD Spammer.
 - **Press** `[Spin Key]` to enable Spin mode.
-- **Press** `[Fake Creative Key]` to enable Fake Creative mode.
-- **Press** `[Velocity Key]` to toggle Velocity.
-- **Press** `[NoBadEffect Key]` to toggle NoBadEffect.
-- **Press** `[NoHurtCam Key]` to toggle NoHurtCam.
-- **Press** `[NoFall Key]` to toggle NoFall.
-- **Press** `[Jesus]` to toggle Jesus.
-- **Press** `[Speed]` to toggle Speed.
+And more....
 
 ## Bonus Features
 - **Auto Teleport:** Automatically teleport if health drops below 500 HP.
