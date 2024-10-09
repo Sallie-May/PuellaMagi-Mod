@@ -9,7 +9,7 @@
 - **Utility Commands:** Command spamming tools for advanced users.
 - **Keybindings:** Quick access to various actions such as VClip, HClip, teleportation, aimbot, and more.
 - **ClickGUI:** Quicker access to everything ! (Press `[ClickGUI Key]`)
-- 
+- More to come...
 ## Installation
 1. Download the latest release from the [releases page](https://github.com/Sallie-May/PuellaMagi-Mod/releases).
 2. Place the mod `.jar` file into your Minecraft `mods` folder.
