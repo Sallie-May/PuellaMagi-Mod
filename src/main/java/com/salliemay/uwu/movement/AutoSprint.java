@@ -13,6 +13,7 @@ public class AutoSprint {
             } else {
                 player.setSprinting(false);
             }
+
         }
     }
 }

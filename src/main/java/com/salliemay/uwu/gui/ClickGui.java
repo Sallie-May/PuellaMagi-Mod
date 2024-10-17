@@ -37,8 +37,10 @@ public class ClickGui extends Screen {
     private void initializeButtons() {
         combatCategory.addButton(new ModuleButton("KillAura", config.killauraEnabled));
         combatCategory.addButton(new ModuleButton("Aimbot", config.aimbotEnabled));
+        combatCategory.addButton(new ModuleButton("Velocity", config.velocity));
 
         movementCategory.addButton(new ModuleButton("Flight", config.flightEnabled));
+        movementCategory.addButton(new ModuleButton("Spin", config.spin));
         movementCategory.addButton(new ModuleButton("AutoSprint", config.AutoSprintEnabled));
         movementCategory.addButton(new ModuleButton("Jesus", config.Jesus));
         movementCategory.addButton(new ModuleButton("AirJump", config.AirJumpEnabled));
@@ -50,16 +52,21 @@ public class ClickGui extends Screen {
         worldCategory.addButton(new ModuleButton("Nuker", config.nukerEnabled));
         worldCategory.addButton(new ModuleButton("StashLogger", config.stashEnabled));
 
-        miscCategory.addButton(new ModuleButton("CMD Spammer", config.cmdSpammerEnabled));
-        miscCategory.addButton(new ModuleButton("No Bad Effect", config.noBadEffectEnabled));
 
-
+        visualCategory.addButton(new ModuleButton("FullBright", config.FullBrightEnabled));
         visualCategory.addButton(new ModuleButton("RGB Cam", config.rgbCamEnabled));
         visualCategory.addButton(new ModuleButton("NoWeather", config.noWeatherEnabled));
         visualCategory.addButton(new ModuleButton("TrueSight", config.TrueSightEnabled));
         visualCategory.addButton(new ModuleButton("NoFog", config.NoFogEnabled));
         visualCategory.addButton(new ModuleButton("GlowESP", config.GlowESPEnabled));
-        miscCategory.addButton(new ModuleButton("ItemESP (Particles)", config.particlesEnabled));
+        visualCategory.addButton(new ModuleButton("ItemESP (Particles)", config.particlesEnabled));
+        visualCategory.addButton(new ModuleButton("TargetHUD", config.TargetHUDEnabled));
+
+        miscCategory.addButton(new ModuleButton("SessionStats", config.SessionStatsEnabled));
+        miscCategory.addButton(new ModuleButton("Headless", config.isHeadLessEnabled));
+        miscCategory.addButton(new ModuleButton("CMD Spammer", config.cmdSpammerEnabled));
+        miscCategory.addButton(new ModuleButton("No Bad Effect", config.noBadEffectEnabled));
+
 
     }
 
@@ -242,8 +249,34 @@ public class ClickGui extends Screen {
 
         private void updateConfig() {
             switch (name) {
-
-
+                case "Hitbox Multiplier":
+                    config.spin = enabled;
+                    SallieMod.spin = enabled;
+                    break;
+                case "Spin":
+                    config.spin = enabled;
+                    SallieMod.spin = enabled;
+                    break;
+                case "SessionStats":
+                    config.SessionStatsEnabled = enabled;
+                    SallieMod.SessionStatsEnabled = enabled;
+                    break;
+                case "TargetHUD":
+                    config.TargetHUDEnabled = enabled;
+                    SallieMod.TargetHUDEnabled = enabled;
+                    break;
+                case "FullBright":
+                    config.FullBrightEnabled = enabled;
+                    SallieMod.FullBrightEnabled = enabled;
+                    break;
+                case "Headless":
+                    config.isHeadLessEnabled = enabled;
+                    SallieMod.isHeadLessEnabled = enabled;
+                    break;
+                case "Velocity":
+                    config.velocity = enabled;
+                    SallieMod.velocity = enabled;
+                    break;
                 case "ItemESP (Particles)":
                     config.particlesEnabled = enabled;
                     SallieMod.particlesEnabled = enabled;

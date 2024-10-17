@@ -47,102 +47,77 @@ public class ModuleOverlay {
 
         activeModules.clear();
 
-        if (SallieMod.killauraEnabled) {
-            activeModules.add("Kill-aura (Enabled)");
-        }
-        if (SallieMod.StepEnabled) {
-            activeModules.add("Step (Enabled)");
-        }
+        List<String> combatModules = new ArrayList<>();
+        if (SallieMod.killauraEnabled) combatModules.add("Kill-aura (Enabled)");
+        if (SallieMod.aimbotEnabled) combatModules.add("Aim-bot Enabled (Range : " + SallieMod.aimbotRange + ")");
+        if (SallieMod.velocity) combatModules.add("Velocity (Enabled)");
 
-        if (SallieMod.autoTeleportEnabled) {
-            activeModules.add("Auto-teleport (Enabled)");
-        }
-        if (SallieMod.GlowESPEnabled) {
-            activeModules.add("GlowESP (Enabled)");
-        }
-        if (SallieMod.SpiderEnabled) {
-            activeModules.add("Spider (Enabled)");
-        }
+        List<String> movementModules = new ArrayList<>();
+        if (SallieMod.StepEnabled) movementModules.add("Step (Enabled)");
+        if (SallieMod.SpiderEnabled) movementModules.add("Spider (Enabled)");
+        if (SallieMod.SpeedEnabled) movementModules.add("Speed (Enabled) (Speed: " + SallieMod.SpeedMultiplier + ")");
+        if (SallieMod.flightEnabled) movementModules.add("Flight (Enabled)");
+        if (SallieMod.AutoSprintEnabled) movementModules.add("Auto Sprint (Enabled)");
+        if (SallieMod.AirJumpEnabled) movementModules.add("Air Jump (Enabled)");
+        if (SallieMod.spin) movementModules.add("Spin (Enabled)");
 
+        List<String> worldModules = new ArrayList<>();
+        if (SallieMod.noWeatherEnabled) worldModules.add("NoWeather (Enabled)");
+        if (SallieMod.fakeCreativeEnabled) worldModules.add("Fake Creative (Enabled)");
+        if (SallieMod.StashEnabled) worldModules.add("StashFinder (Enabled)");
+        worldModules.add("Teleport Height: " + SallieMod.teleportHeight);
+        worldModules.add("Hclip Distance: " + SallieMod.HclipFar);
 
-        if (SallieMod.CMDSpammerEnabled) {
-            activeModules.add("Command Spammer (Enabled)");
-        }
-        if (SallieMod.spin) {
-            activeModules.add("Spin (Enabled)");
-        }
+        List<String> playerModules = new ArrayList<>();
+        if (SallieMod.NoHurtCamEnabled) playerModules.add("NoHurtCam (Enabled)");
+        if (SallieMod.NoFallEnabled) playerModules.add("NoFall (Enabled)");
+        if (SallieMod.autoTeleportEnabled) playerModules.add("Auto-teleport (Enabled)");
+        if (SallieMod.RespawnEnabled) playerModules.add("Respawn (Enabled)");
+        if (SallieMod.TrueSightEnabled) playerModules.add("TrueSight (Enabled)");
+        if (SallieMod.isHeadLessEnabled) playerModules.add("Headless (Enabled)");
 
-        if (SallieMod.RespawnEnabled) {
-            activeModules.add("Respawn (Enabled)");
-        }
-        if (SallieMod.TrueSightEnabled) {
-            activeModules.add("TrueSight (Enabled)");
-        }
+        List<String> visualModules = new ArrayList<>();
+        if (SallieMod.GlowESPEnabled) visualModules.add("GlowESP (Enabled)");
+        if (SallieMod.particlesEnabled) visualModules.add("ItemESP (Enabled)");
+        if (SallieMod.FullBrightEnabled) visualModules.add("FullBright (Enabled)");
+        if (SallieMod.AmbienceEnabled) visualModules.add("Ambience (Enabled)");
 
-        if (SallieMod.SpeedEnabled) {
-            activeModules.add("Speed (Enabled) (Speed:"+ SallieMod.SpeedMultiplier + ")");
-        }
+        List<String> miscModules = new ArrayList<>();
+        if (SallieMod.randomTeleportEnabled) miscModules.add("Random Teleport (Enabled)");
+        if (SallieMod.noBadEffectEnabled) miscModules.add("NoBadEffect (Enabled)");
+        if (!SallieMod.suffixDisabled) miscModules.add("Suffix (Enabled)");
+        if (SallieMod.nukerEnabled) miscModules.add("Nuker (Enabled)");
+        if (SallieMod.CMDSpammerEnabled) combatModules.add("Command Spammer (Enabled)");
 
-        if (SallieMod.particlesEnabled) {
-            activeModules.add("ItemESP (Enabled)");
+        if (!combatModules.isEmpty()) {
+            activeModules.add("Combat Modules:");
+            activeModules.addAll(combatModules);
         }
-
-        if (SallieMod.randomTeleportEnabled) {
-            activeModules.add("Random Teleport (Enabled)");
+        if (!movementModules.isEmpty()) {
+            activeModules.add("Movement Modules:");
+            activeModules.addAll(movementModules);
         }
-        if (SallieMod.noBadEffectEnabled) {
-            activeModules.add("NoBadEffect (Enabled)");
+        if (!worldModules.isEmpty()) {
+            activeModules.add("World Modules:");
+            activeModules.addAll(worldModules);
         }
-        if (SallieMod.flightEnabled) {
-            activeModules.add("Flight (Enabled)");
+        if (!playerModules.isEmpty()) {
+            activeModules.add("Player Modules:");
+            activeModules.addAll(playerModules);
         }
-        if (SallieMod.AutoSprintEnabled) {
-            activeModules.add("Auto Sprint (Enabled)");
+        if (!visualModules.isEmpty()) {
+            activeModules.add("Visual Modules:");
+            activeModules.addAll(visualModules);
         }
-
-        if (SallieMod.aimbotEnabled) {
-            activeModules.add("Aim-bot Enabled (Range : "+SallieMod.aimbotRange+" )");
+        if (!miscModules.isEmpty()) {
+            activeModules.add("Miscellaneous Modules:");
+            activeModules.addAll(miscModules);
         }
-        if (SallieMod.NoHurtCamEnabled) {
-            activeModules.add("NoHurtCam (Enabled)");
-        }
-        if (SallieMod.NoFallEnabled) {
-            activeModules.add("NoFall (Enabled)");
-        }
-
-        if (!SallieMod.suffixDisabled) {
-            activeModules.add("Suffix (Enabled)");
-        }
-        if (SallieMod.velocity) {
-            activeModules.add("Velocity (Enabled)");
-        }
-        if (SallieMod.nukerEnabled) {
-            activeModules.add("Nuker (Enabled)");
-        }
-
-        if (SallieMod.StashEnabled) {
-            activeModules.add("StashFinder (Enabled)");
-        }
-        if (SallieMod.fakeCreativeEnabled) {
-            activeModules.add("Fake Creative (Enabled)");
-        }
-
-        if (SallieMod.AirJumpEnabled) {
-            activeModules.add("Air Jump(Enabled)");
-        }
-        if (SallieMod.AmbienceEnabled) {
-            activeModules.add("Ambience (Enabled)");
-        }
-
-        if (SallieMod.noWeatherEnabled) {
-            activeModules.add("NoWeather (Enabled)");
-        }
-
-        activeModules.add("Teleport Height: " + SallieMod.teleportHeight);
-        activeModules.add("Hclip Distance: " + SallieMod.HclipFar);
 
         renderModules(matrixStack);
     }
+
+
 
     private static void renderModules(MatrixStack matrixStack) {
         int screenWidth = mc.getMainWindow().getScaledWidth();

@@ -8,15 +8,14 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = SallieMod.MOD_ID)
+@Mod.EventBusSubscriber
 public class Spider {
-    private static final boolean isEnabled = SallieMod.SpiderEnabled;
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         PlayerEntity player = event.player;
 
-        if (isEnabled && player != null && event.phase == TickEvent.Phase.END) {
+        if (SallieMod.SpiderEnabled && player != null) {
             spiderMovement(player);
         }
     }

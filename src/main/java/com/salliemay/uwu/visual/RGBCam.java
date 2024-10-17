@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.salliemay.uwu.SallieMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -12,17 +11,16 @@ import net.minecraftforge.fml.common.Mod;
 import java.awt.Color;
 import java.util.Random;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT)
+@Mod.EventBusSubscriber
 public class RGBCam {
 
     private static final Minecraft mc = Minecraft.getInstance();
     private static final Random random = new Random();
-    public static boolean enabled = SallieMod.RGBCamEnabled;
 
 
     @SubscribeEvent
     public static void onRenderOverlay(RenderGameOverlayEvent.Post event) {
-        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL && enabled) {
+        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL && SallieMod.RGBCamEnabled) {
             renderOverlay(event.getMatrixStack());
         }
     }

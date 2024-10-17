@@ -1,4 +1,5 @@
 package com.salliemay.uwu.visual;
+
 import com.google.common.collect.EvictingQueue;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -63,6 +64,8 @@ public class TPSOverlay {
             long newSystemTime = System.currentTimeMillis();
             float newClientTick = ((float) newSystemTime - systemTime2);
             clientTicks.add(newClientTick);
+
+            renderTPSOverlay();
         }
     }
 
@@ -82,17 +85,23 @@ public class TPSOverlay {
         return queue.size() > 0 ? sum / queue.size() : 0.0f;
     }
 
-    @SubscribeEvent
-    public void renderTPSOverlay(RenderGameOverlayEvent.Post event) {
-        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL && !Minecraft.getInstance().isGamePaused()) {
-            MatrixStack matrixStack = event.getMatrixStack();
+    private void renderTPSOverlay() {
+        if (!Minecraft.getInstance().isGamePaused()) {
+            LOGGER.debug("Rendering TPS overlay...");
+            MatrixStack matrixStack = new MatrixStack();
             String tpsText = String.format("TPS: %.2f", calculateServerTPS());
 
             int xPos = 10;
             int yPos = 30;
+            int width = Minecraft.getInstance().getMainWindow().getScaledWidth();
+            int height = Minecraft.getInstance().getMainWindow().getScaledHeight();
             int color = 0x00FF00;
+
+            xPos = width - 10 - Minecraft.getInstance().fontRenderer.getStringWidth(tpsText);
+            yPos = height - 30;
 
             Minecraft.getInstance().fontRenderer.drawStringWithShadow(matrixStack, tpsText, xPos, yPos, color);
         }
     }
+
 }

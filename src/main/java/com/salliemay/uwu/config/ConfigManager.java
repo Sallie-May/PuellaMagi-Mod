@@ -45,15 +45,22 @@ public class ConfigManager {
         public boolean showModules = true;
         public boolean NoFall = true;
         public long timeOfDay = 0;
+        public boolean FullBrightEnabled = true;
+
+        public boolean TargetHUDEnabled = false;
+
         public boolean AutoSprintEnabled = true;
         public boolean GlowESPEnabled = true;
         public boolean AmbienceEnabled = false;
         public boolean AirJumpEnabled = false;
-
+        public boolean isHeadLessEnabled = false;
         public boolean SpiderEnabled = false;
-        public boolean RespawnEnabled = true;
+        public boolean RespawnEnabled = false;
         public boolean NoFogEnabled = true;
+        public boolean HitBoxEnabled = true;
+
         public boolean Jesus = false;
+        public boolean SessionStatsEnabled = false;
         public int rotationMode = 1;
         public double aimbotrange = 15;
         public int healthlimit = 1000;

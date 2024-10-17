@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-@Mod.EventBusSubscriber(modid = SallieMod.MOD_ID, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class StashLogger {
 
     private final int chunkRadius = 8;

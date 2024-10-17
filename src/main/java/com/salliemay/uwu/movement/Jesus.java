@@ -22,7 +22,7 @@ public class Jesus {
         BlockPos posBelowPlayer = new BlockPos(player.getPosX(), player.getPosY() - 0.5, player.getPosZ());
 
         if (world.getBlockState(posBelowPlayer).getBlock() == Blocks.WATER ||
-                world.getBlockState(posBelowPlayer).getBlock() == Blocks.KELP ||
+                world.getBlockState(posBelowPlayer).getBlock() == Blocks.KELP ||world.getBlockState(posBelowPlayer).getBlock() == Blocks.LAVA ||
                 world.getBlockState(posBelowPlayer).getBlock() == Blocks.KELP_PLANT) {
 
             player.setOnGround(true);

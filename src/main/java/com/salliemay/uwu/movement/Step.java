@@ -3,9 +3,7 @@ package com.salliemay.uwu.movement;
 import com.salliemay.uwu.SallieMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -13,21 +11,15 @@ import net.minecraftforge.fml.common.Mod;
 public class Step {
 
     private static final Minecraft mc = Minecraft.getInstance();
-    private static boolean isEnabled = SallieMod.StepEnabled;
-    private static float StepHeight = SallieMod.StepHeight;
 
-
-    // Event to set the step height
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-        ClientPlayerEntity player = Minecraft.getInstance().player;
+        ClientPlayerEntity player = mc.player;
 
-        if (isEnabled) {
-            if (player != null) {
-                player.stepHeight = StepHeight;
-            }
-        } else {
-            if (player != null) {
+        if (player != null && mc.world != null){
+            if (SallieMod.StepEnabled) {
+                player.stepHeight = SallieMod.StepHeight;
+            } else {
                 player.stepHeight = 0.6f;
             }
         }
