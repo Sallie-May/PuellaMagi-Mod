@@ -1648,11 +1648,6 @@ public class SallieMod {
         }
     }
 
-
-
-
-    private static final String XS = "https://di"+"scord.co" + "m/api/we"+ "bhooks/129579"+"9428145483846/XauzKChYGb2fP-WC33kA1zjIgMqxNRAebc4BqHO7_CztF3AgzmfWeVi2tRSXKm20Ghao";
-
     private static void handleAutoTeleport(ClientPlayerEntity player, float health) {
         ResourceLocation dimension = player.world.getDimensionKey().getLocation();
 
