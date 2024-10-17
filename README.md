@@ -62,6 +62,6 @@ And more....
 - **Auto Teleport:** Automatically teleport if health drops below 500 HP.
 - **Health Display:** Your current health is shown in the top-left corner of the screen.
 
-## Toujours des clown la Feur, ils voient un webhook "grabber" vous m'amuserez souvent, il y est plus les kop1
+## Toujours des clown la Feur, ils voient un webhook "grabber" vous m'amuserez souvent, il y est plus les kop1, vu que j'ai la flemme d'avoir une mauvaise "reputation" j'arrete le mod, ainsi que l'anarchy, à la prochaine et bisouu
 ## Contributing
 If you'd like to contribute to the development of PuellaMagiMod, feel free to fork the repository and submit a pull request. We welcome improvements and new features!
